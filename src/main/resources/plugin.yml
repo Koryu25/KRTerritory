@@ -1,0 +1,7 @@
+name: KRTerritory
+version: ${project.version}
+main: com.github.koryu25.krterritory.Main
+api-version: 1.16
+prefix: KRT
+authors: [ Koryu25 ]
+description: KRKingdoms鯖の領土を管理するプラグイン
