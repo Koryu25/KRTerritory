@@ -23,6 +23,15 @@ public class CommandManager implements CommandExecutor {
 
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
+        //ヘルプ表示
+        if (args.length == 0) {
+            sender.sendMessage(plugin.messenger().getMsg("Command.Help.1"));
+            sender.sendMessage(plugin.messenger().getMsg("Command.Help.2"));
+            sender.sendMessage(plugin.messenger().getMsg("Command.Help.3"));
+            sender.sendMessage(plugin.messenger().getMsg("Command.Help.4"));
+            sender.sendMessage(plugin.messenger().getMsg("Command.Help.5"));
+            return true;
+        }
         //sender確認
         if (sender instanceof Player) {
             Player player = (Player) sender;

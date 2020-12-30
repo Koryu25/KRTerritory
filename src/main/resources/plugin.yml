@@ -5,3 +5,7 @@ api-version: 1.16
 prefix: KRT
 authors: [ Koryu25 ]
 description: KRKingdoms鯖の領土を管理するプラグイン
+commands:
+  krt:
+    description: main command
+    usage: /<command> でヘルプ表示

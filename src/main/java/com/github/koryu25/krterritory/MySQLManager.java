@@ -65,7 +65,7 @@ public class MySQLManager {
     public void insertTerritory(String coordinate, String owner, String ownerType, int point) {
         try {
             openConnection();
-            String s = "INSERT INTO territory (coordinate, owner, owner_type, point) VALUES (?, ?, ?, ?)";
+            String s = "INSERT INTO territory (coordinate, owner, owner_type, hit_point) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, coordinate);
             ps.setString(2, owner);

@@ -9,6 +9,12 @@ MySQL:
   ConnectionFailure: §cデータベースへの接続テストに失敗しました。サーバーを停止します。
 
 Command:
+  Help:
+    1: ====== KRTerritory [Command Help] ======
+    2: /krt claim → 現在チャンクを占領
+    3: /krt unclaim → 現在チャンクを放棄
+    4: /krt faction → 派閥メニュー
+    5: ======================================
   Menu:
     Usage: /krt menu
     Success: メニューを開きました。
