@@ -1,0 +1,20 @@
+# MySQLデータベース
+MySQL:
+  host: localhost
+  port: 3306
+  database: krkingdoms
+  username: root
+  password:
+
+# 派閥の使用不可名
+BannedName:
+  - none
+  - 未所属
+  - 所属無し
+  - 所有者なし
+
+# 使用ワールド名
+WorldName: world
+
+# 領土チャンクの初期HP
+ChunkHP: 50
