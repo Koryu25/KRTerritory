@@ -10,7 +10,6 @@ import java.util.List;
 public class MySQLManager {
 
     //InstanceField
-    private final Main plugin;
     private Connection connection;
     private final String host;
     private final int port;
@@ -19,15 +18,14 @@ public class MySQLManager {
     private final String password;
 
     //Constructor
-    public MySQLManager(Main plugin, String host, int port, String database, String username, String password) {
-        this.plugin = plugin;
+    public MySQLManager(String host, int port, String database, String username, String password) {
         this.host = host;
         this.database = database;
         this.username = username;
         this.password = password;
         this.port = port;
         if (!connectionTest()) {
-            plugin.getLogger().severe(plugin.messenger().getMsg("MySQL.ConnectionFailure"));
+            Main.instance.getLogger().severe(Main.instance.messenger().getMsg("MySQL.ConnectionFailure"));
             Bukkit.shutdown();
         }
     }

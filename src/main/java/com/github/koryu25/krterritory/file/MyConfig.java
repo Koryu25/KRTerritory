@@ -9,7 +9,6 @@ import java.util.List;
 
 public class MyConfig {
 
-    private final Main plugin;
     private FileConfiguration config;
 
     //MySQL
@@ -26,16 +25,15 @@ public class MyConfig {
     public int chunkHP;
 
     //Constructor
-    public MyConfig(Main plugin) {
-        this.plugin = plugin;
+    public MyConfig() {
         this.load();
     }
     private void load() {
         //ファイルが存在しなければデフォルトを保存
-        plugin.saveDefaultConfig();
-        if (config != null) plugin.reloadConfig();
+        Main.instance.saveDefaultConfig();
+        if (config != null) Main.instance.reloadConfig();
         //ファイルの取得
-        config = plugin.getConfig();
+        config = Main.instance.getConfig();
 
         //MySQL
         host = config.getString("MySQL.host");

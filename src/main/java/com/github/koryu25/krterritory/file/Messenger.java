@@ -5,8 +5,8 @@ import org.bukkit.entity.Player;
 
 public class Messenger extends CustomConfig {
 
-    public Messenger(Main plugin) {
-        super(plugin, "message.yml");
+    public Messenger() {
+        super("message.yml");
     }
 
     public String getMsg(String name) {

@@ -8,6 +8,10 @@ Prefix: [KRT]
 MySQL:
   ConnectionFailure: §cデータベースへの接続テストに失敗しました。サーバーを停止します。
 
+Item:
+  Tag:
+    War: 戦争用アイテム
+
 Command:
   Help:
     1: ====== KRTerritory [Command Help] ======

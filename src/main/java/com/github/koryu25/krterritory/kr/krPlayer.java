@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 public class krPlayer {
 
     //InstanceField
-    private final Main plugin;
     //Player
     private final Player player;
     //uuid
@@ -21,8 +20,7 @@ public class krPlayer {
     private boolean exists;
 
     //Constructor
-    public krPlayer(Main plugin, Player player) {
-        this.plugin = plugin;
+    public krPlayer(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId().toString();
     }
@@ -30,17 +28,17 @@ public class krPlayer {
     //Insert
     public void insert() {
         if (isExists()) return;
-        plugin.mysql().insertPlayer(player.getName(), uuid);
+        Main.instance.mysql().insertPlayer(player.getName(), uuid);
     }
     //Delete
     public void delete() {
         if (!isExists()) return;
-        plugin.mysql().delete("player", "uuid", uuid);
+        Main.instance.mysql().delete("player", "uuid", uuid);
     }
 
     //isExists
     public boolean isExists() {
-        return plugin.mysql().exists("player", "uuid", uuid);
+        return Main.instance.mysql().exists("player", "uuid", uuid);
     }
     //名前変更確認
     public void changedName() {
@@ -49,28 +47,28 @@ public class krPlayer {
 
     //Getter
     public String getName() {
-        return plugin.mysql().selectString("player", "name", "uuid", uuid);
+        return Main.instance.mysql().selectString("player", "name", "uuid", uuid);
     }
     public int getMoney() {
-        return plugin.mysql().selectInt("player", "money", "uuid", uuid);
+        return Main.instance.mysql().selectInt("player", "money", "uuid", uuid);
     }
     public int getMaxTerritory() {
-        return plugin.mysql().selectInt("player", "max_territory", "uuid", uuid);
+        return Main.instance.mysql().selectInt("player", "max_territory", "uuid", uuid);
     }
     public String getFaction() {
-        return plugin.mysql().selectString("player", "faction", "uuid", uuid);
+        return Main.instance.mysql().selectString("player", "faction", "uuid", uuid);
     }
     //Setter
     public void setName(String name) {
-        plugin.mysql().update("player", "name", name, "uuid", uuid);
+        Main.instance.mysql().update("player", "name", name, "uuid", uuid);
     }
     public void setMoney(int money) {
-        plugin.mysql().update("player", "money", money, "uuid", uuid);
+        Main.instance.mysql().update("player", "money", money, "uuid", uuid);
     }
     public void setMaxTerritory(int maxTerritory) {
-        plugin.mysql().update("player", "max_territory", maxTerritory, "uuid", uuid);
+        Main.instance.mysql().update("player", "max_territory", maxTerritory, "uuid", uuid);
     }
     public void setFaction(String faction) {
-        plugin.mysql().update("player", "faction", faction , "uuid", uuid);
+        Main.instance.mysql().update("player", "faction", faction , "uuid", uuid);
     }
 }

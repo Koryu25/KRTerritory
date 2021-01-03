@@ -8,26 +8,30 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
 
+    public static Main instance;
+
     private MyConfig myConfig;
     private Messenger messenger;
     private MySQLManager mysql;
 
     @Override
     public void onEnable() {
+        //Instance
+        instance = this;
         //Config
-        myConfig = new MyConfig(this);
+        myConfig = new MyConfig();
         //Messenger
-        messenger = new Messenger(this);
+        messenger = new Messenger();
         //MySQL
-        mysql = new MySQLManager(this, myConfig.host, myConfig.port, myConfig.database, myConfig.username, myConfig.password);
+        mysql = new MySQLManager(myConfig.host, myConfig.port, myConfig.database, myConfig.username, myConfig.password);
         if (!mysql.connectionTest()) {
             Bukkit.getLogger().severe(messenger.getMsg("MySQL.ConnectionFailure"));
             Bukkit.shutdown();
         }
         //Command
-        new CommandManager(this);
+        new CommandManager();
         //Listener
-        new PlayerJoinListener(this);
+        new PlayerJoinListener();
     }
 
     @Override
@@ -36,12 +40,12 @@ public final class Main extends JavaPlugin {
     }
 
     public MyConfig myConfig() {
-        return this.myConfig;
+        return myConfig;
     }
     public MySQLManager mysql() {
-        return this.mysql;
+        return mysql;
     }
     public Messenger messenger() {
-        return this.messenger;
+        return messenger;
     }
 }

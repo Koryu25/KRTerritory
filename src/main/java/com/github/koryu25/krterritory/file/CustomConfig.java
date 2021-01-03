@@ -16,18 +16,16 @@ public class CustomConfig {
     private FileConfiguration config = null;
     private final File configFile;
     private final String file;
-    protected final Main plugin;
 
-    public CustomConfig(Main plugin, String fileName) {
-        this.plugin = plugin;
+    public CustomConfig(String fileName) {
         this.file = fileName;
-        this.configFile = new File(plugin.getDataFolder(), file);
+        this.configFile = new File(Main.instance.getDataFolder(), file);
         this.saveDefaultConfig();
         this.reloadConfig();
     }
     public void saveDefaultConfig() {
         if (!configFile.exists()) {
-            plugin.saveResource(file, false);
+            Main.instance.saveResource(file, false);
         }
     }
     public FileConfiguration getConfig() {
@@ -41,12 +39,12 @@ public class CustomConfig {
         try {
             getConfig().save(configFile);
         } catch (IOException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, ex);
+            Main.instance.getLogger().log(Level.SEVERE, "Could not save config to " + configFile, ex);
         }
     }
     public void reloadConfig() {
         config = YamlConfiguration.loadConfiguration(configFile);
-        final InputStream defConfigStream = plugin.getResource(file);
+        final InputStream defConfigStream = Main.instance.getResource(file);
         if (defConfigStream == null) return;
         config.setDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(defConfigStream, StandardCharsets.UTF_8)));
     }
