@@ -8,6 +8,9 @@ import com.github.koryu25.krterritory.kr.krPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.inventory.ItemStack;
+
+import java.awt.*;
 
 public class BlockBreakListener implements Listener {
 
@@ -23,9 +26,14 @@ public class BlockBreakListener implements Listener {
         krChunk krc = new krChunk(e.getBlock().getChunk());
         if (!krc.isExists()) return;
         //持っているアイテム確認
+        ItemStack item = e.getPlayer().getInventory().getItemInMainHand();
         //戦争用のツール
-        if (e.getPlayer().getInventory().getItemInMainHand().getItemMeta().getLore().contains("")) {
-            krc.attacked(e.getPlayer(), 1);
+        String warTag = Main.instance.messenger().getMsg("Item.Tag.War");
+        if (item.getItemMeta() == null) {
+            e.setCancelled(true);
+        }
+        if (item.getItemMeta().getLore().contains(warTag)) {
+            e.setCancelled(krc.attacked(e.getPlayer(), 1));
         }
     }
 }

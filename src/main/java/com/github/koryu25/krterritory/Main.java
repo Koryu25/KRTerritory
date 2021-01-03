@@ -2,6 +2,7 @@ package com.github.koryu25.krterritory;
 
 import com.github.koryu25.krterritory.file.Messenger;
 import com.github.koryu25.krterritory.file.MyConfig;
+import com.github.koryu25.krterritory.listener.BlockBreakListener;
 import com.github.koryu25.krterritory.listener.PlayerJoinListener;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -32,6 +33,7 @@ public final class Main extends JavaPlugin {
         new CommandManager();
         //Listener
         new PlayerJoinListener();
+        new BlockBreakListener();
     }
 
     @Override

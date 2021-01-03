@@ -10,7 +10,7 @@ import java.util.List;
 
 public class krItem {
 
-    public ItemStack getWarTool() {
+    public static ItemStack getWarTool() {
         ItemStack item = new ItemStack(Material.STICK);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName("War Tool");

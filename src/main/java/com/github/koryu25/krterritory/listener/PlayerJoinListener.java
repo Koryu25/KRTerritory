@@ -1,6 +1,7 @@
 package com.github.koryu25.krterritory.listener;
 
 import com.github.koryu25.krterritory.Main;
+import com.github.koryu25.krterritory.kr.krItem;
 import com.github.koryu25.krterritory.kr.krPlayer;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -18,5 +19,7 @@ public class PlayerJoinListener implements Listener {
         krPlayer krp = new krPlayer(e.getPlayer());
         if (krp.isExists()) krp.changedName();
         else krp.insert();
+        //戦争用アイテムをわたす
+        e.getPlayer().getInventory().addItem(krItem.getWarTool());
     }
 }

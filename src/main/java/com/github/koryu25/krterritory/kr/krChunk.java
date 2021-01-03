@@ -44,12 +44,12 @@ public class krChunk {
         return Main.instance.mysql().exists("territory", "coordinate", coordinate);
     }
     //attacked
-    public void attacked(Player attacker, int damage) {
-        if (!isExists()) return;
+    public boolean attacked(Player attacker, int damage) {
+        if (!isExists()) return false;
         switch (getOwnerType()) {
             case Player:
                 String uuid = attacker.getUniqueId().toString();
-                if (getOwner().equals(uuid)) return;
+                if (getOwner().equals(uuid)) return false;
                 //HP確認
                 if (getHitPoint() == 1) {
                     setOwner(uuid);
@@ -57,11 +57,11 @@ public class krChunk {
                 } else {
                     setHitPoint(getHitPoint() - damage);
                 }
-                return;
+                return true;
             case Faction:
             case NPC:
-            case Gathering:
         }
+        return false;
     }
 
     //Getter
@@ -85,6 +85,6 @@ public class krChunk {
         Main.instance.mysql().update("territory", "owner_type", ownerType.name(), "coordinate", coordinate);
     }
     public void setHitPoint(int hitPoint) {
-        Main.instance.mysql().update("territory", "point", hitPoint, "coordinate", coordinate);
+        Main.instance.mysql().update("territory", "hit_point", hitPoint, "coordinate", coordinate);
     }
 }
