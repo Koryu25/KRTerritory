@@ -3,7 +3,7 @@ package com.github.koryu25.krterritory.kr;
 import com.github.koryu25.krterritory.Main;
 import org.bukkit.entity.Player;
 
-public class krPlayer {
+public class KrPlayer {
 
     //InstanceField
     //Player
@@ -11,16 +11,14 @@ public class krPlayer {
     //uuid
     private final String uuid;
     //所持金
-    private int money;
+    //private int money;
     //最大所有可能チャンク数
-    private int maxTerritory;
+    //private int maxTerritory;
     //派閥
-    private String faction;
-    //データに存在するか
-    private boolean exists;
+    //private String faction;
 
     //Constructor
-    public krPlayer(Player player) {
+    public KrPlayer(Player player) {
         this.player = player;
         this.uuid = player.getUniqueId().toString();
     }
@@ -28,7 +26,7 @@ public class krPlayer {
     //Insert
     public void insert() {
         if (isExists()) return;
-        Main.instance.mysql().insertPlayer(player.getName(), uuid);
+        Main.instance.mysql().insertPlayer(player.getName(), uuid, Main.instance.myConfig().chunkHP);
     }
     //Delete
     public void delete() {
@@ -44,6 +42,18 @@ public class krPlayer {
     public void changedName() {
         if (!player.getName().equals(getName())) setName(player.getName());
     }
+    public boolean buy() {
+        //お金が足りてるか
+        int money = getMoney() - Main.instance.myConfig().chunkPrice;
+        if (money <= 0) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.NotEnough"));
+            return true;
+        }
+        //ここで解放
+        setMoney(money);
+        setMaxTerritory(getMaxTerritory() + 1);
+        return true;
+    }
 
     //Getter
     public String getName() {
@@ -55,8 +65,14 @@ public class krPlayer {
     public int getMaxTerritory() {
         return Main.instance.mysql().selectInt("player", "max_territory", "uuid", uuid);
     }
+    public int getTerritory() {
+        return Main.instance.mysql().selectQuantity("territory", "owner", uuid);
+    }
     public String getFaction() {
         return Main.instance.mysql().selectString("player", "faction", "uuid", uuid);
+    }
+    public int getMaxHP() {
+        return Main.instance.mysql().selectInt("player", "max_hp", "uuid", uuid);
     }
     //Setter
     public void setName(String name) {
@@ -70,5 +86,8 @@ public class krPlayer {
     }
     public void setFaction(String faction) {
         Main.instance.mysql().update("player", "faction", faction , "uuid", uuid);
+    }
+    public void setMaxHP(int maxHP) {
+        Main.instance.mysql().update("player", "max_hp", maxHP, "uuid", uuid);
     }
 }

@@ -48,27 +48,41 @@ public class MySQLManager {
     }
 
     //レコード登録
-    public void insertPlayer(String name, String uuid) {
+    public void insertPlayer(String name, String uuid, int hp) {
         try {
             openConnection();
-            String s = "INSERT INTO player (name, uuid) VALUES (?, ?)";
+            String s = "INSERT INTO player (name, uuid, max_hp) VALUES (?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, name);
             ps.setString(2, uuid);
+            ps.setInt(3, hp);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-    public void insertTerritory(String coordinate, String owner, String ownerType, int point) {
+    public void insertTerritory(String coordinate, String owner, String ownerType, int hp) {
         try {
             openConnection();
-            String s = "INSERT INTO territory (coordinate, owner, owner_type, hit_point) VALUES (?, ?, ?, ?)";
+            String s = "INSERT INTO territory (coordinate, owner, owner_type, hp) VALUES (?, ?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, coordinate);
             ps.setString(2, owner);
             ps.setString(3, ownerType);
-            ps.setInt(4, point);
+            ps.setInt(4, hp);
+            ps.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    public void insertFaction(String name, String leader, int hp) {
+        try {
+            openConnection();
+            String s = "INSERT INTO faction (name, leader, max_hp) VALUES (?, ?, ?)";
+            PreparedStatement ps = connection.prepareStatement(s);
+            ps.setString(1, name);
+            ps.setString(2, leader);
+            ps.setInt(3, hp);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

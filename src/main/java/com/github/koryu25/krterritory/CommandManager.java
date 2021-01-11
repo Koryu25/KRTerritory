@@ -1,8 +1,8 @@
 package com.github.koryu25.krterritory;
 
 import com.github.koryu25.krterritory.kr.enums.OwnerType;
-import com.github.koryu25.krterritory.kr.krChunk;
-import com.github.koryu25.krterritory.kr.krPlayer;
+import com.github.koryu25.krterritory.kr.KrChunk;
+import com.github.koryu25.krterritory.kr.KrPlayer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -41,6 +41,8 @@ public class CommandManager implements CommandExecutor {
                     return true;
                 }
                 //ここで表示
+                Menu.main(player);
+                return true;
             }
             //派閥コマンド
             else if (args[0].equalsIgnoreCase("Faction")) {
@@ -50,49 +52,21 @@ public class CommandManager implements CommandExecutor {
                 //領土主張
                 //領土放棄
             }
-            //所有者の変更
+            //領土枠解放
+            else if (args[0].equalsIgnoreCase("Buy")) {
+                if (args.length != 1) {
+                    player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Usage"));
+                    return true;
+                }
+                return new KrPlayer(player).buy();
+            }
             //個人として領土主張
             else if (args[0].equalsIgnoreCase("Claim")) {
                 if (args.length != 1) {
                     player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Usage"));
                     return true;
                 }
-                //ワールド確認
-                if (player.getWorld() != Main.instance.myConfig().world) {
-                    player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.World"));
-                    return true;
-                }
-                //チャンクが所有されてないか
-                krChunk krc = new krChunk(player.getLocation().getChunk());
-                if (krc.isExists()) {
-                    String owner = krc.getOwner();
-                    if (krc.getOwnerType() == OwnerType.Player) {
-                        //既に所有しているか
-                        //他プレイヤーが所有しているか
-                        if (owner.equals(player.getUniqueId().toString())) {
-                            player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Player.Own"));
-                        } else {
-                            player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Player.Other"));
-                        }
-                        return true;
-                    } else if (krc.getOwnerType() == OwnerType.Faction) {
-                        //自分の派閥が所有しているか
-                        //他の派閥が所有しているか
-                        if (new krPlayer(player).getFaction().equals(owner)) {
-                            player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Faction.Own"));
-                        } else {
-                            player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Faction.Other", owner));
-                        }
-                        return true;
-                    } else if (krc.getOwnerType() == OwnerType.NPC) {
-                        player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.NPC", owner));
-                        return true;
-                    }
-                }
-                //ここで領土主張
-                krc.insert(player.getUniqueId().toString(), OwnerType.Player, Main.instance.myConfig().chunkHP);
-                player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Success"));
-                return true;
+                return new KrChunk(player.getLocation().getChunk()).claim(player);
             }
 
             //個人として領土放棄
@@ -101,36 +75,7 @@ public class CommandManager implements CommandExecutor {
                     player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Usage"));
                     return true;
                 }
-                //ワールド確認
-                if (player.getWorld() != Main.instance.myConfig().world) {
-                    player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.World"));
-                    return true;
-                }
-                //チャンクが所有されているか
-                krChunk krc = new krChunk(player.getLocation().getChunk());
-                if (!krc.isExists()) {
-                    player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.NoOwner"));
-                    return true;
-                }
-                //チャンクが自分のものか
-                String owner = krc.getOwner();
-                if (krc.getOwnerType() != OwnerType.Player) {
-                    if (krc.getOwnerType() == OwnerType.Faction) {
-                        player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Faction", owner));
-                    } else if (krc.getOwnerType() == OwnerType.NPC) {
-                        player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.NPC", owner));
-                    } else if (krc.getOwnerType() == OwnerType.Gathering) {
-                        player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Gathering"));
-                    }
-                    return true;
-                } else if (!owner.equals(player.getUniqueId().toString())) {
-                    player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Player", Bukkit.getPlayer(UUID.fromString(owner))));
-                    return true;
-                }
-                //ここで領土放棄
-                krc.delete();
-                player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Success"));
-                return true;
+                return new KrChunk(player.getLocation().getChunk()).unclaim(player);
             }
         }
         return false;

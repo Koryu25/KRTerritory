@@ -23,10 +23,16 @@ public class MyConfig {
     public World world;
     //初期チャンクHP
     public int chunkHP;
+    //領土枠の値段
+    public int chunkPrice;
+    //所持金上限
+    public int moneyLimit;
+    //領土主張金
+    public int moneyClaim;
 
     //Constructor
     public MyConfig() {
-        this.load();
+        load();
     }
     private void load() {
         //ファイルが存在しなければデフォルトを保存
@@ -34,7 +40,7 @@ public class MyConfig {
         if (config != null) Main.instance.reloadConfig();
         //ファイルの取得
         config = Main.instance.getConfig();
-
+        //以下でロード
         //MySQL
         host = config.getString("MySQL.host");
         port = config.getInt("MySQL.port");
@@ -46,6 +52,12 @@ public class MyConfig {
         //使用ワールド名
         world = Bukkit.getWorld(config.getString("WorldName"));
         //初期チャンクHP
-        chunkHP = config.getInt("ChunkHP");
+        chunkHP = config.getInt("Chunk.HP");
+        //領土枠の値段
+        chunkPrice = config.getInt("Chunk.Price");
+        //所持金上限
+        moneyLimit = config.getInt("Money.Limit");
+        //領土主張金
+        moneyClaim = config.getInt("Money.Claim");
     }
 }

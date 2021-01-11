@@ -17,4 +17,13 @@ BannedName:
 WorldName: world
 
 # 領土チャンクの初期HP
-ChunkHP: 50
+# 領土枠解放の値段
+Chunk:
+  HP: 50
+  Price: 10000
+
+# 所持金の上限
+# 領土主張の値段
+Money:
+  Limit: 100000
+  Claim: 1000
