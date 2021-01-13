@@ -2,10 +2,7 @@ package com.github.koryu25.krterritory;
 
 import com.github.koryu25.krterritory.file.Messenger;
 import com.github.koryu25.krterritory.file.MyConfig;
-import com.github.koryu25.krterritory.listener.BlockBreakListener;
-import com.github.koryu25.krterritory.listener.InventoryClickListener;
-import com.github.koryu25.krterritory.listener.PlayerJoinListener;
-import com.github.koryu25.krterritory.listener.PlayerMoveListener;
+import com.github.koryu25.krterritory.listener.*;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -34,9 +31,14 @@ public final class Main extends JavaPlugin {
         //Command
         new CommandManager();
         //Listener
+        //Player
         new PlayerJoinListener();
         new PlayerMoveListener();
+        new PlayerInteractListener();
+        //Block
         new BlockBreakListener();
+        new BlockPlaceListener();
+        //else
         new InventoryClickListener();
     }
 
