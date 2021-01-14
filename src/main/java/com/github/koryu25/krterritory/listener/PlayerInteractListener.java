@@ -14,9 +14,7 @@ public class PlayerInteractListener implements Listener {
 
     @EventHandler
     public void onPlayerInteract(PlayerInteractEvent e) {
-        //ワールド確認
-        if (e.getPlayer().getWorld() != Main.instance.myConfig().world) return;
-        //所有者確認
-        e.setCancelled(!new KrChunk(e.getClickedBlock().getChunk()).isOwner(e.getPlayer()));
+        if (e.getClickedBlock() == null) return;
+        e.setCancelled(new KrChunk(e.getClickedBlock().getChunk()).isProtected(e.getPlayer()));
     }
 }

@@ -10,6 +10,7 @@ import java.util.List;
 
 public class KrItem {
 
+    //実装なし
     public static ItemStack getWarTool() {
         ItemStack item = new ItemStack(Material.STICK);
         ItemMeta meta = item.getItemMeta();

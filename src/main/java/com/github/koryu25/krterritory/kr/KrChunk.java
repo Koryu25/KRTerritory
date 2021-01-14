@@ -137,8 +137,21 @@ public class KrChunk {
         if (getHP() == getMaxHP()) return true;
         else return false;
     }
+    //isProtected
+    public boolean isProtected(Player player) {
+        if (!isExists()) return false;
+        //ワールド確認
+        if (player.getWorld() != Main.instance.myConfig().world) return false;
+        //所有者確認
+        if (isOwner(player)) return false;
+        //報告
+        String msg = Main.instance.messenger().getMsg("Protected");
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
+        return true;
+    }
     //onAttacked
     public boolean onAttacked(Player attacker, int damage) {
+        if (attacker.getWorld() != Main.instance.myConfig().world) return false;
         if (!isExists()) return false;
         if (getOwnerType() == OwnerType.Player) {
             //プレイヤーがオンラインか

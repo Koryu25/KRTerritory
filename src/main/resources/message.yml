@@ -2,7 +2,7 @@
 # メッセージを出力する際はここからメッセージを取得する。
 
 # Prefix
-Prefix: [KRT]
+Prefix: "[KRT]"
 
 # MySQL関連
 MySQL:
@@ -16,6 +16,8 @@ War:
   Offline:
     Player: "プレイヤー: {player}はオフラインなので攻撃できません。"
     Faction: "派閥: {faction}はオフラインなので攻撃できません。"
+
+Protected: "現在のチャンクは保護されているため、干渉できません。"
 
 Command:
   Help:

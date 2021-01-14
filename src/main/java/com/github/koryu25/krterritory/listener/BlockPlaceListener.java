@@ -14,9 +14,6 @@ public class BlockPlaceListener implements Listener {
 
     @EventHandler
     public void onBlockPlace(BlockPlaceEvent e) {
-        //ワールド確認
-        if (e.getBlock().getWorld() != Main.instance.myConfig().world) return;
-        //所有者確認
-        e.setCancelled(!new KrChunk(e.getBlock().getChunk()).isOwner(e.getPlayer()));
+        e.setCancelled(new KrChunk(e.getBlock().getChunk()).isProtected(e.getPlayer()));
     }
 }
