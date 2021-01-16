@@ -38,12 +38,64 @@ public class KrFaction {
     //Insert
     public void insert(Player leader) {
         if (isExists()) return;
-        Main.instance.mysql().insertFaction(name, leader.getUniqueId().toString(), Main.instance.myConfig().chunkHP);
+        Main.instance.mysql().insertFaction(name, leader.getUniqueId().toString());
     }
     //Delete
     public void delete() {
         if (!isExists()) return;
         Main.instance.mysql().delete("faction", "name", name);
+    }
+    //Create
+    public boolean create(Player player) {
+        //文字制限の確認
+        if (name.length() < 3 || name.length() > 24) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Create.Length"));
+            return true;
+        }
+        //同じ名前が存在してないか
+        if (isExists()) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Create.Exists"));
+            return true;
+        }
+        //プレイヤーがすでに所属してないか
+        KrPlayer krp = new KrPlayer(player);
+        if (krp.getFaction() != null) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Create.Belong"));
+            return true;
+        }
+        //ここで作成
+        insert(player);
+        krp.setFaction(name);
+        player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Create.Success", name));
+        return true;
+    }
+    //Remove
+    public boolean remove(Player player) {
+        //存在するか
+        if (!isExists()) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Remove.Exists"));
+            return true;
+        }
+        //プレイヤーが派閥に所属しているか
+        KrPlayer krp = new KrPlayer(player);
+        if (krp.getFaction() == null) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Remove.Belong"));
+            return true;
+        }
+        //プレイヤーの派閥と一致するか
+        if (krp.getFaction().equals(name)) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Remove.Match"));
+            return true;
+        }
+        //プレイヤーが派閥の頭首か
+        if (getLeader().getName().equals(player.getName())) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Remove.NotLeader"));
+            return true;
+        }
+        //ここで削除
+        delete();
+        player.sendMessage(Main.instance.messenger().getMsg("Faction.Remove.Success", name));
+        return true;
     }
 
     //isExists
@@ -56,6 +108,43 @@ public class KrFaction {
             if (player.isOnline()) return true;
         }
         return false;
+    }
+    //購入
+    public boolean buySlot(Player player) {
+        //リーダーであるか
+        if (!getLeader().getName().equals(player.getName())) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.NotLeader"));
+            return true;
+        }
+        //お金が足りてるか
+        int money = getMoney() - Main.instance.myConfig().chunkSlot;
+        if (money <= 0) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Buy.NotEnough"));
+            return true;
+        }
+        //ここで解放
+        setMoney(money);
+        setMaxTerritory(getMaxTerritory() + 1);
+        player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Buy.Slot.Success"));
+        return true;
+    }
+    public boolean buyHP(Player player) {
+        //リーダーであるか
+        if (!getLeader().getName().equals(player.getName())) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.NotLeader"));
+            return true;
+        }
+        //お金が足りてるか
+        int money = getMoney() - Main.instance.myConfig().chunkLevel;
+        if (money <= 0) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Buy.NotEnough"));
+            return true;
+        }
+        //ここでレベルアップ
+        setMoney(money);
+        setHPLevel(getHPLevel() + 1);
+        player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Buy.Level.Success"));
+        return true;
     }
 
     //Getter
@@ -86,8 +175,11 @@ public class KrFaction {
     public int getMaxTerritory() {
         return Main.instance.mysql().selectInt("faction", "max_territory", "name", name);
     }
+    public int getHPLevel() {
+        return Main.instance.mysql().selectInt("faction", "hp_level", "name", name);
+    }
     public int getMaxHP() {
-        return Main.instance.mysql().selectInt("faction", "max_hp", "name", name);
+        return getHPLevel() * Main.instance.myConfig().chunkHP;
     }
     public List<String> getAlly() {
         return stringToList(Main.instance.mysql().selectString("faction", "ally", "name", name));
@@ -114,8 +206,8 @@ public class KrFaction {
     public void setMaxTerritory(int maxTerritory) {
         Main.instance.mysql().update("faction", "max_territory", maxTerritory, "name", name);
     }
-    public void setMaxHP(int maxHP) {
-        Main.instance.mysql().update("faction", "max_hp", maxHP, "name", name);
+    public void setHPLevel(int level) {
+        Main.instance.mysql().update("faction", "hp_level", level, "name", name);
     }
     public void setAlly(List<String> ally) {
         Main.instance.mysql().update("faction", "ally", listToString(ally), "name", name);

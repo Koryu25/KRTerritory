@@ -34,11 +34,10 @@ public final class Main extends JavaPlugin {
         //Player
         new PlayerJoinListener();
         new PlayerMoveListener();
+        //Protect
         new PlayerInteractListener();
-        //Block
         new BlockBreakListener();
-        new BlockPlaceListener();
-        //else
+        //Menu
         new InventoryClickListener();
     }
 

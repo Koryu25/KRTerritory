@@ -48,14 +48,13 @@ public class MySQLManager {
     }
 
     //レコード登録
-    public void insertPlayer(String name, String uuid, int hp) {
+    public void insertPlayer(String name, String uuid) {
         try {
             openConnection();
-            String s = "INSERT INTO player (name, uuid, max_hp) VALUES (?, ?, ?)";
+            String s = "INSERT INTO player (name, uuid) VALUES (?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, name);
             ps.setString(2, uuid);
-            ps.setInt(3, hp);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -75,14 +74,13 @@ public class MySQLManager {
             e.printStackTrace();
         }
     }
-    public void insertFaction(String name, String leader, int hp) {
+    public void insertFaction(String name, String leader) {
         try {
             openConnection();
-            String s = "INSERT INTO faction (name, leader, max_hp) VALUES (?, ?, ?)";
+            String s = "INSERT INTO faction (name, leader) VALUES (?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, name);
             ps.setString(2, leader);
-            ps.setInt(3, hp);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

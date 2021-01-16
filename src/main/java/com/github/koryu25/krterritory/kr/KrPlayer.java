@@ -26,7 +26,7 @@ public class KrPlayer {
     //Insert
     public void insert() {
         if (isExists()) return;
-        Main.instance.mysql().insertPlayer(player.getName(), uuid, Main.instance.myConfig().chunkHP);
+        Main.instance.mysql().insertPlayer(player.getName(), uuid);
     }
     //Delete
     public void delete() {
@@ -42,9 +42,10 @@ public class KrPlayer {
     public void changedName() {
         if (!player.getName().equals(getName())) setName(player.getName());
     }
-    public boolean buy() {
+    //購入
+    public boolean buySlot() {
         //お金が足りてるか
-        int money = getMoney() - Main.instance.myConfig().chunkPrice;
+        int money = getMoney() - Main.instance.myConfig().chunkSlot;
         if (money <= 0) {
             player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.NotEnough"));
             return true;
@@ -52,6 +53,20 @@ public class KrPlayer {
         //ここで解放
         setMoney(money);
         setMaxTerritory(getMaxTerritory() + 1);
+        player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Slot.Success"));
+        return true;
+    }
+    public boolean buyHP() {
+        //お金が足りてるか
+        int money = getMoney() - Main.instance.myConfig().chunkLevel;
+        if (money <= 0) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.NotEnough"));
+            return true;
+        }
+        //ここでレベルアップ
+        setMoney(money);
+        setHPLevel(getHPLevel() + 1);
+        player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Level.Success"));
         return true;
     }
 
@@ -71,8 +86,11 @@ public class KrPlayer {
     public String getFaction() {
         return Main.instance.mysql().selectString("player", "faction", "uuid", uuid);
     }
+    public int getHPLevel() {
+        return Main.instance.mysql().selectInt("player", "hp_level", "uuid", uuid);
+    }
     public int getMaxHP() {
-        return Main.instance.mysql().selectInt("player", "max_hp", "uuid", uuid);
+        return getHPLevel() * Main.instance.myConfig().chunkHP;
     }
     //Setter
     public void setName(String name) {
@@ -87,7 +105,7 @@ public class KrPlayer {
     public void setFaction(String faction) {
         Main.instance.mysql().update("player", "faction", faction , "uuid", uuid);
     }
-    public void setMaxHP(int maxHP) {
-        Main.instance.mysql().update("player", "max_hp", maxHP, "uuid", uuid);
+    public void setHPLevel(int level) {
+        Main.instance.mysql().update("player", "hp_level", level, "uuid", uuid);
     }
 }

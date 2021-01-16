@@ -1,15 +1,12 @@
 package com.github.koryu25.krterritory;
 
-import com.github.koryu25.krterritory.kr.enums.OwnerType;
 import com.github.koryu25.krterritory.kr.KrChunk;
+import com.github.koryu25.krterritory.kr.KrFaction;
 import com.github.koryu25.krterritory.kr.KrPlayer;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-
-import java.util.UUID;
 
 public class CommandManager implements CommandExecutor {
 
@@ -23,11 +20,11 @@ public class CommandManager implements CommandExecutor {
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
         //ヘルプ表示
         if (args.length == 0) {
+            sender.sendMessage(Main.instance.messenger().getMsg("Command.Help.0"));
             sender.sendMessage(Main.instance.messenger().getMsg("Command.Help.1"));
             sender.sendMessage(Main.instance.messenger().getMsg("Command.Help.2"));
             sender.sendMessage(Main.instance.messenger().getMsg("Command.Help.3"));
             sender.sendMessage(Main.instance.messenger().getMsg("Command.Help.4"));
-            sender.sendMessage(Main.instance.messenger().getMsg("Command.Help.5"));
             return true;
         }
         //sender確認
@@ -44,38 +41,41 @@ public class CommandManager implements CommandExecutor {
                 Menu.main(player);
                 return true;
             }
-            //派閥コマンド
-            else if (args[0].equalsIgnoreCase("Faction")) {
-                //作成
-                //削除
-                //宣戦布告
-                //領土主張
-                //領土放棄
-            }
-            //領土枠解放
-            else if (args[0].equalsIgnoreCase("Buy")) {
-                if (args.length != 1) {
-                    player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Usage"));
-                    return true;
+            //購入
+            if (args[0].equalsIgnoreCase("Buy")) {
+                if (args.length == 1) return false;
+                //領土枠解放
+                if (args[1].equalsIgnoreCase("Slot")) {
+                    if (args.length != 2) {
+                        player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Slot.Usage"));
+                        return true;
+                    }
+                    return new KrPlayer(player).buySlot();
                 }
-                return new KrPlayer(player).buy();
+                //領土レベルアップ
+                if (args[1].equalsIgnoreCase("HP")) {
+                    if (args.length != 2) {
+                        player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Level.Usage"));
+                        return true;
+                    }
+                    return new KrPlayer(player).buyHP();
+                }
             }
             //個人として領土主張
-            else if (args[0].equalsIgnoreCase("Claim")) {
+            if (args[0].equalsIgnoreCase("Claim")) {
                 if (args.length != 1) {
                     player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Usage"));
                     return true;
                 }
-                return new KrChunk(player.getLocation().getChunk()).claim(player);
+                return new KrChunk(player.getLocation().getChunk()).claimPlayer(player);
             }
-
             //個人として領土放棄
-            else if (args[0].equalsIgnoreCase("UnClaim")) {
+            if (args[0].equalsIgnoreCase("UnClaim")) {
                 if (args.length != 1) {
                     player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Usage"));
                     return true;
                 }
-                return new KrChunk(player.getLocation().getChunk()).unclaim(player);
+                return new KrChunk(player.getLocation().getChunk()).unclaimPlayer(player);
             }
         }
         return false;

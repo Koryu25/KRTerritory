@@ -47,7 +47,7 @@ public class KrChunk {
         Main.instance.mysql().delete("territory", "coordinate", coordinate);
     }
     //Claim
-    public boolean claim(Player player) {
+    public boolean claimPlayer(Player player) {
         //ワールド確認
         if (player.getWorld() != Main.instance.myConfig().world) {
             player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.World"));
@@ -86,7 +86,7 @@ public class KrChunk {
         return true;
     }
     //UnClaim
-    public boolean unclaim(Player player) {
+    public boolean unclaimPlayer(Player player) {
         //ワールド確認
         if (player.getWorld() != Main.instance.myConfig().world) {
             player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.World"));

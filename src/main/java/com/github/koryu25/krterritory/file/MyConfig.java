@@ -24,7 +24,9 @@ public class MyConfig {
     //初期チャンクHP
     public int chunkHP;
     //領土枠の値段
-    public int chunkPrice;
+    public int chunkSlot;
+    //領土のHPlevelの値段
+    public int chunkLevel;
     //所持金上限
     public int moneyLimit;
     //領土主張金
@@ -54,7 +56,9 @@ public class MyConfig {
         //初期チャンクHP
         chunkHP = config.getInt("Chunk.HP");
         //領土枠の値段
-        chunkPrice = config.getInt("Chunk.Price");
+        chunkSlot = config.getInt("Chunk.Slot");
+        //領土のHPLevelの値段
+        chunkLevel = config.getInt("Chunk.Level");
         //所持金上限
         moneyLimit = config.getInt("Money.Limit");
         //領土主張金

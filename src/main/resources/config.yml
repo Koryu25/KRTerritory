@@ -16,11 +16,13 @@ BannedName:
 # 使用ワールド名
 WorldName: world
 
-# 領土チャンクの初期HP
+# 領土のレベル毎HP
 # 領土枠解放の値段
+# 領土のHPLevelの値段
 Chunk:
   HP: 50
-  Price: 10000
+  Slot: 10000
+  Level: 40000
 
 # 所持金の上限
 # 領土主張の値段

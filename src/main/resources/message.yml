@@ -21,16 +21,21 @@ Protected: "現在のチャンクは保護されているため、干渉でき�
 
 Command:
   Help:
-    1: "====== KRTerritory [Command Help] ======"
-    2: "/krt claim → 現在チャンクを占領"
-    3: "/krt unclaim → 現在チャンクを放棄"
-    4: "/krt faction → 派閥コマンド(未実装)"
-    5: "======================================"
+    0: "====== KRTerritory [Command Help] ======"
+    1: "/krt claim → 現在チャンクを占領"
+    2: "/krt unclaim → 現在チャンクを放棄"
+    3: "/krt faction → 派閥コマンド(未実装)"
+    4: "======================================"
   Menu:
     Usage: "/krt menu"
     Success: "メニューを開きました。"
   Buy:
-    Usage: "/krt buy"
+    Slot:
+      Usage: "/krt buy slot"
+      Success: "領土所有枠を買いました。"
+    HP:
+      Usage: "/krt buy hp"
+      Success: "領土HPレベルを買いました。"
     NotEnough: "お金が足りません。"
   Claim:
     Usage: "/krt claim"
@@ -44,7 +49,7 @@ Command:
     NPC_Player: "現在チャンクはNPCプレイヤー: {player}が所有しています。"
     NPC_Faction: "現在チャンクはNPC派閥: {faction}が所有しています。"
     Max: "最大所有可能領土数が上限です。"
-    Success: "現在チャンクを領土として主張しました。"
+    Success: "現在チャンクの所有権を主張しました。"
   UnClaim:
     Usage: "/krt UnClaim"
     World: "現在ワールドで領土の放棄はできません。"

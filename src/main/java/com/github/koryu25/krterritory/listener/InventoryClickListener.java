@@ -3,7 +3,6 @@ package com.github.koryu25.krterritory.listener;
 import com.github.koryu25.krterritory.Main;
 import com.github.koryu25.krterritory.Menu;
 import com.github.koryu25.krterritory.kr.KrChunk;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -39,10 +38,10 @@ public class InventoryClickListener implements Listener {
             if (e.getSlot() == 3) {
                 //claim, unclaim
                 if (krc.isOwner(player)) {
-                    krc.unclaim(player);
+                    krc.unclaimPlayer(player);
                 } else {
                     if (krc.isExists()) {}
-                    else krc.claim(player);
+                    else krc.claimPlayer(player);
                 }
                 player.closeInventory();
             } else if (e.getSlot() == 5) {

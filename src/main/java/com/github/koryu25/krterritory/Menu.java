@@ -100,7 +100,7 @@ public class Menu {
             if (krc.isExists()) {//プレイヤー以外が所有者
                 inv.setItem(3, item(Material.RED_CONCRETE, "§4宣戦布告する。"));
             } else {//所有者なし
-                inv.setItem(3, item(Material.LIGHT_BLUE_TERRACOTTA, "§3領土の所有権を主張する。"));
+                inv.setItem(3, item(Material.LIGHT_BLUE_TERRACOTTA, "§3領土の所有権を主張する。", "§7消費資金§f: " + Main.instance.myConfig().moneyClaim));
             }
         }
         //HP
