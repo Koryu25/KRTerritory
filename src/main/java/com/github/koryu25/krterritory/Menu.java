@@ -124,11 +124,13 @@ public class Menu {
         //領土枠
         inv.setItem(2, item(Material.GRASS_BLOCK, "§2領土枠を購入する。",
                 "§7現在の領土枠§f: " + krp.getMaxTerritory(),
+                "§7現在の所持金§f: " + krp.getMoney(),
                 "§b値段§f: " + Main.instance.myConfig().chunkSlot
         ));
         //領土HP
         inv.setItem(4, item(Material.LIME_TERRACOTTA, "§a領土HPレベルを購入する。",
                 "§7現在の領土HPレベル§f: " + krp.getMaxHP(),
+                "§7現在の所持金§f: " + krp.getMoney(),
                 "§b値段§f: " + Main.instance.myConfig().chunkLevel
         ));
         //メインメニューへ

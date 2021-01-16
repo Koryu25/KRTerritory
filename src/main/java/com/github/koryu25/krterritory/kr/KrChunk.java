@@ -80,6 +80,12 @@ public class KrChunk {
             player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Max"));
             return true;
         }
+        //お金が足りてるか
+        int money = krp.getMoney() - Main.instance.myConfig().chunkClaim;
+        if (money < 0) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Money"));
+            return true;
+        }
         //ここで領土主張
         insert(player.getUniqueId().toString(), OwnerType.Player);
         player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Success"));

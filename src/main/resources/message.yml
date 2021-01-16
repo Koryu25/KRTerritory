@@ -49,6 +49,7 @@ Command:
     NPC_Player: "現在チャンクはNPCプレイヤー: {player}が所有しています。"
     NPC_Faction: "現在チャンクはNPC派閥: {faction}が所有しています。"
     Max: "最大所有可能領土数が上限です。"
+    Money: "お金が足りません。"
     Success: "現在チャンクの所有権を主張しました。"
   UnClaim:
     Usage: "/krt UnClaim"

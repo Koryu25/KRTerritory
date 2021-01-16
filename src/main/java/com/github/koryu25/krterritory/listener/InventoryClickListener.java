@@ -30,6 +30,7 @@ public class InventoryClickListener implements Listener {
                 Menu.chunk(player);
             } else if (e.getSlot() == 24) {
                 //プレイヤー
+                Menu.buy(player);
             }
         }
         //領土メニュー
