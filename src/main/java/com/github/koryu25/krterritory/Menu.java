@@ -17,6 +17,7 @@ public class Menu {
 
     public static final String mainName = "[krt]MainMenu";
     public static final String chunkName = "[krt]ChunkMenu";
+    public static final String buyName = "[krt]BuyMenu";
 
     //MainMenu
     public static void main(Player player) {
@@ -69,9 +70,9 @@ public class Menu {
         inv.setItem(pIndex, item(Material.FLOWER_BANNER_PATTERN, pName,
                 "§7名前§f: " + krp.getName(),
                 "§7所持金§f: " + krp.getMoney(),
-                "§7最大所有可能領土数§f: " + krp.getMaxTerritory(),
-                "§7所有領土数§f: " + krp.getTerritory(),
-                "§7所属派閥§f: " + faction
+                "§7所有領土数§f: " + krp.getTerritory() + "/" + krp.getMaxTerritory(),
+                "§7所属派閥§f: " + faction,
+                "§c購入メニューへ"
                 ));
         player.openInventory(inv);
     }
@@ -98,9 +99,9 @@ public class Menu {
             inv.setItem(3, item(Material.RED_TERRACOTTA, "§c領土の所有権を捨てる。"));
         } else {
             if (krc.isExists()) {//プレイヤー以外が所有者
-                inv.setItem(3, item(Material.RED_CONCRETE, "§4宣戦布告する。"));
+                inv.setItem(3, item(Material.RED_CONCRETE, "§4宣戦布告する。", "未実装"));
             } else {//所有者なし
-                inv.setItem(3, item(Material.LIGHT_BLUE_TERRACOTTA, "§3領土の所有権を主張する。", "§7消費資金§f: " + Main.instance.myConfig().moneyClaim));
+                inv.setItem(3, item(Material.LIGHT_BLUE_TERRACOTTA, "§3領土の所有権を主張する。", "§7消費資金§f: " + Main.instance.myConfig().chunkClaim));
             }
         }
         //HP
@@ -117,6 +118,23 @@ public class Menu {
         player.openInventory(inv);
     }
     //ショップメニュー
+    public static void buy(Player player) {
+        Inventory inv = Bukkit.createInventory(null, 9, buyName);
+        KrPlayer krp = new KrPlayer(player);
+        //領土枠
+        inv.setItem(2, item(Material.GRASS_BLOCK, "§2領土枠を購入する。",
+                "§7現在の領土枠§f: " + krp.getMaxTerritory(),
+                "§b値段§f: " + Main.instance.myConfig().chunkSlot
+        ));
+        //領土HP
+        inv.setItem(4, item(Material.LIME_TERRACOTTA, "§a領土HPレベルを購入する。",
+                "§7現在の領土HPレベル§f: " + krp.getMaxHP(),
+                "§b値段§f: " + Main.instance.myConfig().chunkLevel
+        ));
+        //メインメニューへ
+        inv.setItem(6, item(Material.REDSTONE_LAMP, "メインメニューへ"));
+        player.openInventory(inv);
+    }
 
     //フレームセッター
     private static Inventory frame(Inventory inv, ItemStack item) {

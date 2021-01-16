@@ -19,13 +19,9 @@ WorldName: world
 # 領土のレベル毎HP
 # 領土枠解放の値段
 # 領土のHPLevelの値段
+# 領土主張の値段
 Chunk:
   HP: 50
-  Slot: 10000
   Level: 40000
-
-# 所持金の上限
-# 領土主張の値段
-Money:
-  Limit: 100000
+  Slot: 10000
   Claim: 1000

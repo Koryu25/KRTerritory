@@ -3,6 +3,7 @@ package com.github.koryu25.krterritory.listener;
 import com.github.koryu25.krterritory.Main;
 import com.github.koryu25.krterritory.Menu;
 import com.github.koryu25.krterritory.kr.KrChunk;
+import com.github.koryu25.krterritory.kr.KrPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -31,7 +32,7 @@ public class InventoryClickListener implements Listener {
                 //プレイヤー
             }
         }
-        //領土主張メニュー
+        //領土メニュー
         else if (title.equals(Menu.chunkName)) {
             e.setCancelled(true);
             KrChunk krc = new KrChunk(player.getLocation().getChunk());
@@ -53,6 +54,23 @@ public class InventoryClickListener implements Listener {
                     }
                 }
             } else if (e.getSlot() == 7) {
+                //メインメニュー
+                Menu.main(player);
+            }
+        }
+        //購入メニュー
+        else if (title.equals(Menu.buyName)) {
+            e.setCancelled(true);
+            KrPlayer krp = new KrPlayer(player);
+            if (e.getSlot() == 2) {
+                //領土枠
+                krp.buySlot();
+                player.closeInventory();
+            } else if (e.getSlot() == 4) {
+                //領土HPレベル
+                krp.buyHP();
+                player.closeInventory();
+            } else if (e.getSlot() == 6) {
                 //メインメニュー
                 Menu.main(player);
             }

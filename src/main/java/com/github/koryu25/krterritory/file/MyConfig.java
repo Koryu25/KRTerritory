@@ -23,14 +23,12 @@ public class MyConfig {
     public World world;
     //初期チャンクHP
     public int chunkHP;
-    //領土枠の値段
-    public int chunkSlot;
     //領土のHPlevelの値段
     public int chunkLevel;
-    //所持金上限
-    public int moneyLimit;
+    //領土枠の値段
+    public int chunkSlot;
     //領土主張金
-    public int moneyClaim;
+    public int chunkClaim;
 
     //Constructor
     public MyConfig() {
@@ -55,13 +53,11 @@ public class MyConfig {
         world = Bukkit.getWorld(config.getString("WorldName"));
         //初期チャンクHP
         chunkHP = config.getInt("Chunk.HP");
-        //領土枠の値段
-        chunkSlot = config.getInt("Chunk.Slot");
         //領土のHPLevelの値段
         chunkLevel = config.getInt("Chunk.Level");
-        //所持金上限
-        moneyLimit = config.getInt("Money.Limit");
+        //領土枠の値段
+        chunkSlot = config.getInt("Chunk.Slot");
         //領土主張金
-        moneyClaim = config.getInt("Money.Claim");
+        chunkClaim = config.getInt("Chunk.Claim");
     }
 }
