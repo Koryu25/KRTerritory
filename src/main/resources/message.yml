@@ -32,9 +32,11 @@ Command:
   Buy:
     Slot:
       Usage: "/krt buy slot"
+      Max: "既に最大値です。"
       Success: "領土所有枠を買いました。"
     HP:
       Usage: "/krt buy hp"
+      Max: "既に最大値です。"
       Success: "領土HPレベルを買いました。"
     NotEnough: "お金が足りません。"
   Claim:
@@ -61,3 +63,10 @@ Command:
     NPC_Fation: "現在チャンクはNPC派閥: {faction}が所有しています。"
     Gathering: "現在チャンクは所有されていません。"
     Success: "現在チャンクを放棄しました。"
+  Recovery:
+    Usage: "/krt recovery"
+    World: "現在のワールドで領土HPの回復はできません。"
+    NotOwner: "あなたは現在チャンクの所有者ではありません。"
+    Max: "領土HPは既に上限値です。"
+    NotEnough: "お金が足りません。"
+    Success: "領土HPを回復しました。"

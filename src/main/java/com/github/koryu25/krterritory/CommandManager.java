@@ -77,6 +77,14 @@ public class CommandManager implements CommandExecutor {
                 }
                 return new KrChunk(player.getLocation().getChunk()).unclaimPlayer(player);
             }
+            //HP回復
+            if (args[0].equalsIgnoreCase("Recovery")) {
+                if (args.length != 1) {
+                    player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.Usage"));
+                    return true;
+                }
+                return new KrChunk(player.getLocation().getChunk()).recovery(player);
+            }
         }
         return false;
     }

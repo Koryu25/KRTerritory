@@ -108,7 +108,7 @@ public class Menu {
         String name = "§7HP: §f" + krc.getHP() + "/" + krc.getMaxHP();
         if (krc.isOwner(player)) {
             if (krc.isHPMax()) inv.setItem(5, item(Material.LIME_TERRACOTTA, name, "§a領土のHPは全回復しています。"));
-            else inv.setItem(5, item(Material.RED_TERRACOTTA, name, "§2領土のHPを回復させる。"));
+            else inv.setItem(5, item(Material.RED_TERRACOTTA, name, "§2領土のHPを回復させる。", "§7消費資金§f: " + Main.instance.myConfig().chunkRecovery));
         } else {
             if (krc.isExists()) inv.setItem(5, item(Material.CYAN_TERRACOTTA, name));
             else inv.setItem(5, item(Material.CYAN_TERRACOTTA, "HPなし"));

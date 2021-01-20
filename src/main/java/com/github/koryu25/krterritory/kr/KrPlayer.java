@@ -50,6 +50,11 @@ public class KrPlayer {
             player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.NotEnough"));
             return true;
         }
+        //最大値でないか
+        if (getMaxTerritory() == Main.instance.myConfig().chunkMaxSlot) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Slot.Max"));
+            return true;
+        }
         //ここで解放
         setMoney(money);
         setMaxTerritory(getMaxTerritory() + 1);
@@ -61,6 +66,11 @@ public class KrPlayer {
         int money = getMoney() - Main.instance.myConfig().chunkLevel;
         if (money <= 0) {
             player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.NotEnough"));
+            return true;
+        }
+        //最大値でないか
+        if (getHPLevel() == Main.instance.myConfig().chunkMaxLevel) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.HP.Max"));
             return true;
         }
         //ここでレベルアップ

@@ -25,8 +25,14 @@ public class MyConfig {
     public int chunkHP;
     //領土のHPlevelの値段
     public int chunkLevel;
+    //上の最大値
+    public int chunkMaxLevel;
+    //HP回復の値段
+    public int chunkRecovery;
     //領土枠の値段
     public int chunkSlot;
+    //上の最大値
+    public int chunkMaxSlot;
     //領土主張金
     public int chunkClaim;
 
@@ -55,8 +61,14 @@ public class MyConfig {
         chunkHP = config.getInt("Chunk.HP");
         //領土のHPLevelの値段
         chunkLevel = config.getInt("Chunk.Level");
+        //上の最大値
+        chunkMaxLevel = config.getInt("Chunk.MaxLevel");
+        //HP回復の値段
+        chunkRecovery = config.getInt("Chunk.Recovery");
         //領土枠の値段
         chunkSlot = config.getInt("Chunk.Slot");
+        //上の最大値
+        chunkMaxSlot = config.getInt("Chunk.MaxSlot");
         //領土主張金
         chunkClaim = config.getInt("Chunk.Claim");
     }

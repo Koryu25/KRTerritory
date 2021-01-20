@@ -207,6 +207,42 @@ public class KrChunk {
             return true;
         }
     }
+    //回復
+    public boolean recovery(Player player) {
+        //ワールド確認
+        if (player.getWorld() != Main.instance.myConfig().world) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.World"));
+            return true;
+        }
+        //所有者確認
+        if (!isOwner(player)) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.NotOwner"));
+            return true;
+        }
+        //既に上限か確認
+        if (getHP() == getMaxHP()) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.Max"));
+            return true;
+        }
+        //所有者タイプ
+        if (getOwnerType() == OwnerType.Player) {
+            //お金が足りるか確認
+            KrPlayer krp = new KrPlayer(player);
+            int money = krp.getMoney() - Main.instance.myConfig().chunkRecovery;
+            if (money < 0) {
+                player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.NotEnough"));
+                return true;
+            }
+            //ここで回復
+            krp.setMoney(money);
+            setHP(getMaxHP());
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.Success"));
+            return true;
+        } else if (getOwnerType() == OwnerType.Faction) {
+            //
+        }
+        return false;
+    }
 
     //Getter
     public String getCoordinate() {

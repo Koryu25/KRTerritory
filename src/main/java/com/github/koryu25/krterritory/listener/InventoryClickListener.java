@@ -50,7 +50,7 @@ public class InventoryClickListener implements Listener {
                 //HP回復
                 if (krc.isOwner(player)) {
                     if (!krc.isHPMax()) {
-                        krc.setHP(krc.getMaxHP());
+                        krc.recovery(player);
                         player.closeInventory();
                     }
                 }

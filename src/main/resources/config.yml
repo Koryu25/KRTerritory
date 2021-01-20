@@ -17,11 +17,17 @@ BannedName:
 WorldName: world
 
 # 領土のレベル毎HP
-# 領土枠解放の値段
 # 領土のHPLevelの値段
+# HPLevelの最大値
+# HP回復の値段
+# 領土枠解放の値段
+# 最大領土枠数
 # 領土主張の値段
 Chunk:
   HP: 50
   Level: 40000
+  MaxLevel: 100
+  Recovery: 1000
   Slot: 10000
+  MaxSlot: 64
   Claim: 1000
