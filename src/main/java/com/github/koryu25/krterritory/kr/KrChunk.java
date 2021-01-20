@@ -192,12 +192,15 @@ public class KrChunk {
     //ダメージ
     public boolean onDamage(Player attacker, int damage) {
         int hp = getHP() - damage;
+        Player owner = Bukkit.getPlayer(getOwner());
         if (hp <= 0) {
             //オーナー変更
             setOwner(attacker.getUniqueId().toString());
             setOwnerType(OwnerType.Player);
             //攻撃者にメッセージ
             attacker.sendMessage(Main.instance.messenger().getMsg("War.Territory.Win"));
+            //所有者にメッセージ
+            owner.sendMessage(Main.instance.messenger().getMsg("War.Territory.Lose"));
             return false;
         } else {
             //ダメージ付与
@@ -205,6 +208,9 @@ public class KrChunk {
             //攻撃者にメッセージ
             String msg = Main.instance.messenger().getMsg("War.Territory.HP") + hp;
             attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
+            //所有者にメッセージ
+            msg = Main.instance.messenger().getMsg("War.Territory.Attacked");
+            owner.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             return true;
         }
     }

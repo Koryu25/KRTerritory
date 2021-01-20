@@ -10,7 +10,8 @@ MySQL:
 
 War:
   Territory:
-    HP: "領土攻撃中　HP: "
+    Attacked: "§4領土が攻撃されています！"
+    HP: "§c領土攻撃中　HP: "
     Win: "領土を奪いました。"
     Lose: "領土を奪われました。"
   Offline:
