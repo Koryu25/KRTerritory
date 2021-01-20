@@ -87,6 +87,7 @@ public class KrChunk {
             return true;
         }
         //ここで領土主張
+        krp.setMoney(money);
         insert(player.getUniqueId().toString(), OwnerType.Player);
         player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Success"));
         return true;
