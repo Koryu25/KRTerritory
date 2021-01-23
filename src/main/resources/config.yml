@@ -17,17 +17,16 @@ BannedName:
 WorldName: world
 
 # 領土のレベル毎HP
+Chunk.HP: 50
 # 領土のHPLevelの値段
+Chunk.Level: 40000
 # HPLevelの最大値
+Chunk.MaxLevel: 100
 # HP回復の値段
+Chunk.Recovery: 1000
 # 領土枠解放の値段
+Chunk.Slot: 10000
 # 最大領土枠数
+Chunk.MaxSlot: 64
 # 領土主張の値段
-Chunk:
-  HP: 50
-  Level: 40000
-  MaxLevel: 100
-  Recovery: 1000
-  Slot: 10000
-  MaxSlot: 64
-  Claim: 1000
+  Chunk.Claim: 1000

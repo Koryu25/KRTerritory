@@ -197,6 +197,8 @@ public class KrChunk {
             //オーナー変更
             setOwner(attacker.getUniqueId().toString());
             setOwnerType(OwnerType.Player);
+            //HP
+            setHP(Main.instance.myConfig().chunkHP);
             //攻撃者にメッセージ
             attacker.sendMessage(Main.instance.messenger().getMsg("War.Territory.Win"));
             //所有者にメッセージ

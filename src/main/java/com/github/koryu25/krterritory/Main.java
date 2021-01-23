@@ -24,10 +24,6 @@ public final class Main extends JavaPlugin {
         messenger = new Messenger();
         //MySQL
         mysql = new MySQLManager(myConfig.host, myConfig.port, myConfig.database, myConfig.username, myConfig.password);
-        if (!mysql.connectionTest()) {
-            Bukkit.getLogger().severe(messenger.getMsg("MySQL.ConnectionFailure"));
-            Bukkit.shutdown();
-        }
         //Command
         new CommandManager();
         //Listener

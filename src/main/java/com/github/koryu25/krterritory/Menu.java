@@ -17,7 +17,7 @@ public class Menu {
 
     public static final String mainName = "[krt]MainMenu";
     public static final String chunkName = "[krt]ChunkMenu";
-    public static final String buyName = "[krt]BuyMenu";
+    public static final String buyName = "[krt]ShopMenu";
 
     //MainMenu
     public static void main(Player player) {
@@ -67,7 +67,7 @@ public class Menu {
         //プレイヤーの情報
         String faction = krp.getFaction();
         if (faction == null) faction = "所属なし";
-        inv.setItem(pIndex, item(Material.FLOWER_BANNER_PATTERN, pName,
+        inv.setItem(pIndex, item(Material.BOOK, pName,
                 "§7名前§f: " + krp.getName(),
                 "§7所持金§f: " + krp.getMoney(),
                 "§7所有領土数§f: " + krp.getTerritory() + "/" + krp.getMaxTerritory(),
@@ -129,7 +129,8 @@ public class Menu {
         ));
         //領土HP
         inv.setItem(4, item(Material.LIME_TERRACOTTA, "§a領土HPレベルを購入する。",
-                "§7現在の領土HPレベル§f: " + krp.getMaxHP(),
+                "§7現在の領土HPレベル§f: " + krp.getHPLevel(),
+                "§7現在のHP上限§f: " + krp.getMaxHP(),
                 "§7現在の所持金§f: " + krp.getMoney(),
                 "§b値段§f: " + Main.instance.myConfig().chunkLevel
         ));
