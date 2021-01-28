@@ -40,10 +40,10 @@ public class InventoryClickListener implements Listener {
             if (e.getSlot() == 3) {
                 //claim, unclaim
                 if (krc.isOwner(player)) {
-                    krc.unclaimPlayer(player);
+                    krc.unclaim(player);
                 } else {
                     if (krc.isExists()) {}
-                    else krc.claimPlayer(player);
+                    else krc.claim(player);
                 }
                 player.closeInventory();
             } else if (e.getSlot() == 5) {

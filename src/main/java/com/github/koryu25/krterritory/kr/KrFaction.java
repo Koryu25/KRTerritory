@@ -109,43 +109,6 @@ public class KrFaction {
         }
         return false;
     }
-    //購入
-    public boolean buySlot(Player player) {
-        //リーダーであるか
-        if (!getLeader().getName().equals(player.getName())) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.NotLeader"));
-            return true;
-        }
-        //お金が足りてるか
-        int money = getMoney() - Main.instance.myConfig().chunkSlot;
-        if (money <= 0) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Buy.NotEnough"));
-            return true;
-        }
-        //ここで解放
-        setMoney(money);
-        setMaxTerritory(getMaxTerritory() + 1);
-        player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Buy.Slot.Success"));
-        return true;
-    }
-    public boolean buyHP(Player player) {
-        //リーダーであるか
-        if (!getLeader().getName().equals(player.getName())) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.NotLeader"));
-            return true;
-        }
-        //お金が足りてるか
-        int money = getMoney() - Main.instance.myConfig().chunkLevel;
-        if (money <= 0) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Buy.NotEnough"));
-            return true;
-        }
-        //ここでレベルアップ
-        setMoney(money);
-        setHPLevel(getHPLevel() + 1);
-        player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Buy.Level.Success"));
-        return true;
-    }
 
     //Getter
     public String getName() {
@@ -170,7 +133,7 @@ public class KrFaction {
         return Main.instance.mysql().selectInt("faction", "max_member", "name", name);
     }
     public List<Player> getMember() {
-        return stringToPlayer(stringToList(Main.instance.mysql().selectString("faction", "member", "name", name)));
+        return stringToPlayer(Main.instance.mysql().selectStringList("player", "uuid", "faction", name));
     }
     public int getMaxTerritory() {
         return Main.instance.mysql().selectInt("faction", "max_territory", "name", name);
@@ -199,9 +162,6 @@ public class KrFaction {
     }
     public void setMaxMember(int maxMember) {
         Main.instance.mysql().update("faction", "max_member", maxMember, "name", name);
-    }
-    public void setMember(List<Player> member) {
-        Main.instance.mysql().update("faction", "member", listToString(playerToString(member)), "name", name);
     }
     public void setMaxTerritory(int maxTerritory) {
         Main.instance.mysql().update("faction", "max_territory", maxTerritory, "name", name);

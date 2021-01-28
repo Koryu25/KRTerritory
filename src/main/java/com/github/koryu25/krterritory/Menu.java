@@ -3,7 +3,6 @@ package com.github.koryu25.krterritory;
 import com.github.koryu25.krterritory.kr.KrChunk;
 import com.github.koryu25.krterritory.kr.KrFaction;
 import com.github.koryu25.krterritory.kr.KrPlayer;
-import com.github.koryu25.krterritory.kr.enums.OwnerType;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -41,17 +40,11 @@ public class Menu {
         KrChunk krc = new KrChunk(player.getLocation().getChunk());
         Material material;
         if (krc.isExists()) {
-            if (krc.isOwner(player)) {
-                material = Material.LIGHT_BLUE_STAINED_GLASS_PANE;
-            } else if (krc.getOwnerType() == OwnerType.Gathering) {
-                material = Material.YELLOW_STAINED_GLASS_PANE;
-            } else {
-                material = Material.RED_STAINED_GLASS_PANE;
-            }
+            if (krc.isOwner(player)) material = Material.LIGHT_BLUE_STAINED_GLASS_PANE;
+            else material = Material.RED_STAINED_GLASS_PANE;
             inv.setItem(cIndex, item(Material.GRASS_BLOCK, cName,
                     "§7座標§f: " + krc.getCoordinate(),
                     "§7所有者§f: " + krc.getOwner(),
-                    "§7所有者タイプ§f: " + krc.getOwnerType().getLabel(),
                     "§7HP: §f" + krc.getHP() + "/" + krc.getMaxHP(),
                     "§a領土メニューへ"
             ));
@@ -85,7 +78,6 @@ public class Menu {
             inv.setItem(1, item(Material.GRASS_BLOCK, "チャンク詳細:",
                     "§7座標§f: " + krc.getCoordinate(),
                     "§7所有者§f: " + krc.getOwner(),
-                    "§7所有者タイプ§f: " + krc.getOwnerType().getLabel(),
                     "§7HP: §f" + krc.getHP() + "/" + krc.getMaxHP()
             ));
         } else {

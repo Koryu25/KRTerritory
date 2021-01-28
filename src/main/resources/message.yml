@@ -14,9 +14,7 @@ War:
     HP: "§c領土攻撃中　HP: "
     Win: "領土を奪いました。"
     Lose: "領土を奪われました。"
-  Offline:
-    Player: "プレイヤー: {player}はオフラインなので攻撃できません。"
-    Faction: "派閥: {faction}はオフラインなので攻撃できません。"
+  Offline: "所有者がオフラインなので攻撃できません。"
 
 Protected: "現在のチャンクは保護されているため、干渉できません。"
 
@@ -43,14 +41,8 @@ Command:
   Claim:
     Usage: "/krt claim"
     World: "現在ワールドの領土は所有できません。"
-    Player:
-      Own: "現在チャンクは既に所有しています。"
-      Other: "現在チャンクはプレイヤー: {player}が所有しています。"
-    Faction:
-      Own: "現在チャンクはあなたの派閥が所有しています。"
-      Other: "現在チャンクは派閥: {faction}が所有しています。"
-    NPC_Player: "現在チャンクはNPCプレイヤー: {player}が所有しています。"
-    NPC_Faction: "現在チャンクはNPC派閥: {faction}が所有しています。"
+    Own: "現在チャンクは既に所有しています。"
+    Other: "現在チャンクはプレイヤー: {player}が所有しています。"
     Max: "最大所有可能領土数が上限です。"
     Money: "お金が足りません。"
     Success: "現在チャンクの所有権を主張しました。"
@@ -59,10 +51,6 @@ Command:
     World: "現在ワールドで領土の放棄はできません。"
     NoOwner: "現在チャンクは所有されていません。"
     Player: "現在チャンクはプレイヤー: {player}に所有されています。"
-    Faction: "現在チャンクは派閥: {faction}が所有しています。"
-    NPC_Player: "現在チャンクはNPCプレイヤー: {player}が所有しています。"
-    NPC_Fation: "現在チャンクはNPC派閥: {faction}が所有しています。"
-    Gathering: "現在チャンクは所有されていません。"
     Success: "現在チャンクを放棄しました。"
   Recovery:
     Usage: "/krt recovery"

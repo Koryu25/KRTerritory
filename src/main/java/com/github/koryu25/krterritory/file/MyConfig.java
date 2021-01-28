@@ -58,18 +58,18 @@ public class MyConfig {
         //使用ワールド名
         world = Bukkit.getWorld(config.getString("WorldName"));
         //初期チャンクHP
-        chunkHP = config.getInt("Chunk.HP");
+        chunkHP = config.getInt("ChunkHP");
         //領土のHPLevelの値段
-        chunkLevel = config.getInt("Chunk.Level");
+        chunkLevel = config.getInt("ChunkLevel");
         //上の最大値
-        chunkMaxLevel = config.getInt("Chunk.MaxLevel");
+        chunkMaxLevel = config.getInt("ChunkMaxLevel");
         //HP回復の値段
-        chunkRecovery = config.getInt("Chunk.Recovery");
+        chunkRecovery = config.getInt("ChunkRecovery");
         //領土枠の値段
-        chunkSlot = config.getInt("Chunk.Slot");
+        chunkSlot = config.getInt("ChunkSlot");
         //上の最大値
-        chunkMaxSlot = config.getInt("Chunk.MaxSlot");
+        chunkMaxSlot = config.getInt("ChunkMaxSlot");
         //領土主張金
-        chunkClaim = config.getInt("Chunk.Claim");
+        chunkClaim = config.getInt("ChunkClaim");
     }
 }

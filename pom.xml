@@ -6,7 +6,7 @@
 
     <groupId>com.github.Koryu25</groupId>
     <artifactId>KRTerritory</artifactId>
-    <version>0.7.3</version>
+    <version>0.7.7</version>
     <packaging>jar</packaging>
 
     <name>KRTerritory</name>

@@ -1,7 +1,6 @@
 package com.github.koryu25.krterritory;
 
 import com.github.koryu25.krterritory.kr.KrChunk;
-import com.github.koryu25.krterritory.kr.KrFaction;
 import com.github.koryu25.krterritory.kr.KrPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -67,7 +66,7 @@ public class CommandManager implements CommandExecutor {
                     player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Usage"));
                     return true;
                 }
-                return new KrChunk(player.getLocation().getChunk()).claimPlayer(player);
+                return new KrChunk(player.getLocation().getChunk()).claim(player);
             }
             //個人として領土放棄
             if (args[0].equalsIgnoreCase("UnClaim")) {
@@ -75,7 +74,7 @@ public class CommandManager implements CommandExecutor {
                     player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Usage"));
                     return true;
                 }
-                return new KrChunk(player.getLocation().getChunk()).unclaimPlayer(player);
+                return new KrChunk(player.getLocation().getChunk()).unclaim(player);
             }
             //HP回復
             if (args[0].equalsIgnoreCase("Recovery")) {

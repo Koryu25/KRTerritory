@@ -33,6 +33,7 @@ public final class Main extends JavaPlugin {
         //Protect
         new PlayerInteractListener();
         new BlockBreakListener();
+        new EntityDamageByEntityListener();
         //Menu
         new InventoryClickListener();
     }

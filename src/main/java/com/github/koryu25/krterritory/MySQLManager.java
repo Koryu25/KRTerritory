@@ -60,14 +60,13 @@ public class MySQLManager {
             e.printStackTrace();
         }
     }
-    public void insertTerritory(String coordinate, String owner, String ownerType, int hp) {
+    public void insertTerritory(String coordinate, String owner, int hp) {
         try {
             openConnection();
-            String s = "INSERT INTO territory (coordinate, owner, owner_type, hp) VALUES (?, ?, ?, ?)";
+            String s = "INSERT INTO territory (coordinate, owner, hp) VALUES (?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, coordinate);
             ps.setString(2, owner);
-            ps.setString(3, ownerType);
             ps.setInt(4, hp);
             ps.executeUpdate();
         } catch (Exception e) {

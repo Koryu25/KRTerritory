@@ -1,7 +1,6 @@
 package com.github.koryu25.krterritory.kr;
 
 import com.github.koryu25.krterritory.Main;
-import com.github.koryu25.krterritory.kr.enums.OwnerType;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
@@ -19,8 +18,6 @@ public class KrChunk {
     private final String coordinate;
     //所有者
     //private String owner;
-    //所有者タイプ
-    //private OwnerType ownerType;
     //ヒットポイント
     //private int hitPoint;
 
@@ -31,15 +28,10 @@ public class KrChunk {
     }
 
     //Insert
-    public void insert(String owner, OwnerType ownerType) {
+    public void insert(String owner) {
         if (isExists()) return;
-        int hp = Main.instance.myConfig().chunkHP;
-        if (ownerType == OwnerType.Player) {
-            hp = new KrPlayer(Bukkit.getPlayer(UUID.fromString(owner))).getMaxHP();
-        } else if (ownerType == OwnerType.Faction) {
-            hp = new KrFaction(owner).getMaxHP();
-        }
-        Main.instance.mysql().insertTerritory(coordinate, owner, ownerType.name(), hp);
+        int hp = new KrPlayer(Bukkit.getPlayer(UUID.fromString(owner))).getMaxHP();
+        Main.instance.mysql().insertTerritory(coordinate, owner, hp);
     }
     //Delete
     public void delete() {
@@ -47,7 +39,7 @@ public class KrChunk {
         Main.instance.mysql().delete("territory", "coordinate", coordinate);
     }
     //Claim
-    public boolean claimPlayer(Player player) {
+    public boolean claim(Player player) {
         //ワールド確認
         if (player.getWorld() != Main.instance.myConfig().world) {
             player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.World"));
@@ -55,22 +47,10 @@ public class KrChunk {
         }
         //チャンクが所有されてないか
         if (isExists()) {
-            if (getOwnerType() == OwnerType.Player) {
-                if (isOwner(player)) {
-                    player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Player.Own"));
-                } else {
-                    player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Player.Other", getOwner()));
-                }
-            } else if (getOwnerType() == OwnerType.Faction) {
-                if (isOwner(player)) {
-                    player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Faction.Own"));
-                } else {
-                    player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Faction.Other", getOwner()));
-                }
-            } else if (getOwnerType() == OwnerType.NPC_Player) {
-                player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.NPC_Player", getOwner()));
-            } else if (getOwnerType() == OwnerType.NPC_Faction) {
-                player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.NPC_Faction", getOwner()));
+            if (isOwner(player)) {
+                player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Own"));
+            } else {
+                player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Other", getOwner()));
             }
             return true;
         }
@@ -88,12 +68,12 @@ public class KrChunk {
         }
         //ここで領土主張
         krp.setMoney(money);
-        insert(player.getUniqueId().toString(), OwnerType.Player);
+        insert(player.getUniqueId().toString());
         player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Success"));
         return true;
     }
     //UnClaim
-    public boolean unclaimPlayer(Player player) {
+    public boolean unclaim(Player player) {
         //ワールド確認
         if (player.getWorld() != Main.instance.myConfig().world) {
             player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.World"));
@@ -105,15 +85,8 @@ public class KrChunk {
             return true;
         }
         //チャンクが自分のものか
-        if (getOwnerType() != OwnerType.Player) {
-            if (getOwnerType() == OwnerType.Gathering) {
-                player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Gathering"));
-            } else {
-                player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim." + getOwnerType().getLabel(), getOwner()));
-            }
-            return true;
-        } else if (!isOwner(player)) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Player", Bukkit.getPlayer(UUID.fromString(getOwner()))));
+        if (!isOwner(player)) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Player", getOwner()));
             return true;
         }
         //ここで領土放棄
@@ -129,15 +102,9 @@ public class KrChunk {
     //isOwner
     public boolean isOwner(Player player) {
         if (!isExists()) return false;
-        if (getOwnerType() == OwnerType.Player) {
-            if (getOwner().equals(player.getName())) return true;
-            else return false;
-        } else if (getOwnerType() == OwnerType.Faction) {
-            if (getOwner().equals(new KrPlayer(player).getFaction())) return true;
-            else return false;
-        } else {
-            return false;
-        }
+        if (getOwner().equals(player.getUniqueId().toString())) return true;
+        if (new KrFaction(new KrPlayer(player).getFaction()).getMember().contains(player)) return true;
+        return false;
     }
     //isHPMax
     public boolean isHPMax() {
@@ -160,49 +127,37 @@ public class KrChunk {
     public boolean onAttacked(Player attacker, int damage) {
         if (attacker.getWorld() != Main.instance.myConfig().world) return false;
         if (!isExists()) return false;
-        if (getOwnerType() == OwnerType.Player) {
-            //プレイヤーがオンラインか
-            if (!Bukkit.getPlayer(getOwner()).isOnline()) {
-                String msg = Main.instance.messenger().getMsg("War.Offline.Player", Bukkit.getPlayer(getOwner()));
+        KrPlayer krp = new KrPlayer(getOwner());
+        //所有者がオンラインか
+        if (krp.getFaction() != null) {
+            if (!new KrFaction(krp.getFaction()).isOnline()) {
+                String msg = Main.instance.messenger().getMsg("War.Offline", getOwner());
                 attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
                 return true;
             }
-            //自分の領土か
-            if (isOwner(attacker)) return false;
-            //ここで攻撃
-            return onDamage(attacker, damage);
-        } else if (getOwnerType() == OwnerType.Faction) {
-            //派閥がオンラインか
-            if (!new KrFaction(getOwner()).isOnline()) {
-                String msg = Main.instance.messenger().getMsg("War.Offline.Faction", getOwner());
-                attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
-                return true;
-            }
-            //自分の派閥が存在するか(未所属では派閥領土を攻撃できない)
-            if (new KrPlayer(attacker).getFaction() == null) return true;
-            //自分の派閥か
-            if (isOwner(attacker)) return false;
-            //ここで攻撃
-            return onDamage(attacker, damage);
-        } else {
-            //ここで攻撃
-            return onDamage(attacker, damage);
+        } else if (!getOwner().isOnline()) {
+            String msg = Main.instance.messenger().getMsg("War.Offline", getOwner());
+            attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
+            return true;
         }
+        //自分の領土か
+        if (isOwner(attacker)) return false;
+        //ここで攻撃
+        return onDamage(attacker, damage);
+
     }
     //ダメージ
     public boolean onDamage(Player attacker, int damage) {
         int hp = getHP() - damage;
-        Player owner = Bukkit.getPlayer(getOwner());
         if (hp <= 0) {
             //オーナー変更
             setOwner(attacker.getUniqueId().toString());
-            setOwnerType(OwnerType.Player);
             //HP
-            setHP(Main.instance.myConfig().chunkHP);
+            setHP(new KrPlayer(attacker).getMaxHP());
             //攻撃者にメッセージ
             attacker.sendMessage(Main.instance.messenger().getMsg("War.Territory.Win"));
             //所有者にメッセージ
-            owner.sendMessage(Main.instance.messenger().getMsg("War.Territory.Lose"));
+            getOwner().sendMessage(Main.instance.messenger().getMsg("War.Territory.Lose"));
             return false;
         } else {
             //ダメージ付与
@@ -212,7 +167,7 @@ public class KrChunk {
             attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             //所有者にメッセージ
             msg = Main.instance.messenger().getMsg("War.Territory.Attacked");
-            owner.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
+            getOwner().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             return true;
         }
     }
@@ -233,24 +188,18 @@ public class KrChunk {
             player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.Max"));
             return true;
         }
-        //所有者タイプ
-        if (getOwnerType() == OwnerType.Player) {
-            //お金が足りるか確認
-            KrPlayer krp = new KrPlayer(player);
-            int money = krp.getMoney() - Main.instance.myConfig().chunkRecovery;
-            if (money < 0) {
-                player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.NotEnough"));
-                return true;
-            }
-            //ここで回復
-            krp.setMoney(money);
-            setHP(getMaxHP());
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.Success"));
+        //お金が足りるか確認
+        KrPlayer krp = new KrPlayer(player);
+        int money = krp.getMoney() - Main.instance.myConfig().chunkRecovery;
+        if (money < 0) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.NotEnough"));
             return true;
-        } else if (getOwnerType() == OwnerType.Faction) {
-            //
         }
-        return false;
+        //ここで回復
+        krp.setMoney(money);
+        setHP(getMaxHP());
+        player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.Success"));
+        return true;
     }
 
     //Getter
@@ -260,33 +209,19 @@ public class KrChunk {
     public Chunk getChunk() {
         return chunk;
     }
-    public String getOwner() {
-        String s = Main.instance.mysql().selectString("territory", "owner", "coordinate", coordinate);
-        if (getOwnerType() == OwnerType.Player) return Bukkit.getPlayer(UUID.fromString(s)).getName();
-        return s;
-    }
-    public OwnerType getOwnerType() {
-        return OwnerType.valueOf(Main.instance.mysql().selectString("territory", "owner_type", "coordinate", coordinate));
+    public Player getOwner() {
+        return Bukkit.getPlayer(UUID.fromString(Main.instance.mysql().selectString("territory", "owner", "coordinate", coordinate)));
     }
     public int getHP() {
         return Main.instance.mysql().selectInt("territory", "hp", "coordinate", coordinate);
     }
     public int getMaxHP() {
         if (!isExists()) return Main.instance.myConfig().chunkHP;
-        if (getOwnerType() == OwnerType.Player) {
-            return new KrPlayer(Bukkit.getPlayer(getOwner())).getMaxHP();
-        } else if (getOwnerType() == OwnerType.Faction) {
-            return new KrFaction(getOwner()).getMaxHP();
-        } else {
-            return Main.instance.myConfig().chunkHP;
-        }
+        return new KrPlayer(getOwner()).getMaxHP();
     }
     //Setter
     public void setOwner(String owner) {
         Main.instance.mysql().update("territory", "owner", owner, "coordinate", coordinate);
-    }
-    public void setOwnerType(OwnerType ownerType) {
-        Main.instance.mysql().update("territory", "owner_type", ownerType.name(), "coordinate", coordinate);
     }
     public void setHP(int hitPoint) {
         Main.instance.mysql().update("territory", "hp", hitPoint, "coordinate", coordinate);
