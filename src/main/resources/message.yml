@@ -59,3 +59,16 @@ Command:
     Max: "領土HPは既に上限値です。"
     NotEnough: "お金が足りません。"
     Success: "領土HPを回復しました。"
+  Create:
+    Usage: "/krt create [ 派閥の名前 ]"
+    Length: "派閥の名前は3文字以上、24文字以下です。"
+    Exists: "入力した名前の派閥は既に存在します。"
+    Belong: "あなたは既に派閥に所属しています。"
+    Success: "派閥: {faction}を作成しました。"
+  Remove:
+    Usage: "/krt remove [ 派閥の名前 ]"
+    Exists: "入力した派閥は存在しません。"
+    Belong: "あなたは派閥に所属していません。"
+    Match: "あなたは入力した派閥に所属していません。"
+    NotLeader: "あなたは派閥の頭首ではありません。"
+    Success: "派閥: {faction}を削除しました。"

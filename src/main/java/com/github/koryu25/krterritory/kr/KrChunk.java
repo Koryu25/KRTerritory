@@ -101,9 +101,15 @@ public class KrChunk {
     }
     //isOwner
     public boolean isOwner(Player player) {
+        //存在するか
         if (!isExists()) return false;
+        //プレイヤーが同じか
         if (getOwner().equals(player.getUniqueId().toString())) return true;
-        if (new KrFaction(new KrPlayer(player).getFaction()).getMember().contains(player)) return true;
+        //派閥が同じか
+        KrPlayer owner = new KrPlayer(getOwner());
+        if (owner.isBelong()) {
+            if (owner.getFaction().equals(new KrPlayer(player).getFaction())) return true;
+        }
         return false;
     }
     //isHPMax
@@ -127,9 +133,11 @@ public class KrChunk {
     public boolean onAttacked(Player attacker, int damage) {
         if (attacker.getWorld() != Main.instance.myConfig().world) return false;
         if (!isExists()) return false;
-        KrPlayer krp = new KrPlayer(getOwner());
+        //自分の領土か
+        if (isOwner(attacker)) return false;
         //所有者がオンラインか
-        if (krp.getFaction() != null) {
+        KrPlayer krp = new KrPlayer(getOwner());
+        if (krp.isBelong()) {
             if (!new KrFaction(krp.getFaction()).isOnline()) {
                 String msg = Main.instance.messenger().getMsg("War.Offline", getOwner());
                 attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
@@ -140,11 +148,8 @@ public class KrChunk {
             attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             return true;
         }
-        //自分の領土か
-        if (isOwner(attacker)) return false;
         //ここで攻撃
         return onDamage(attacker, damage);
-
     }
     //ダメージ
     public boolean onDamage(Player attacker, int damage) {

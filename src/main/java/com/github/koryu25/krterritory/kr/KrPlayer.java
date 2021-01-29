@@ -42,6 +42,10 @@ public class KrPlayer {
     public void changedName() {
         if (!player.getName().equals(getName())) setName(player.getName());
     }
+    public boolean isBelong() {
+        if (getFaction() != null) return true;
+        else return false;
+    }
     //購入
     public boolean buySlot() {
         //お金が足りてるか

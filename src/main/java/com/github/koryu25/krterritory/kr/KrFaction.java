@@ -49,52 +49,53 @@ public class KrFaction {
     public boolean create(Player player) {
         //文字制限の確認
         if (name.length() < 3 || name.length() > 24) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Create.Length"));
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Create.Length"));
             return true;
         }
         //同じ名前が存在してないか
         if (isExists()) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Create.Exists"));
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Create.Exists"));
             return true;
         }
         //プレイヤーがすでに所属してないか
         KrPlayer krp = new KrPlayer(player);
-        if (krp.getFaction() != null) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Create.Belong"));
+        if (krp.isBelong()) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Create.Belong"));
             return true;
         }
         //ここで作成
         insert(player);
         krp.setFaction(name);
-        player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Create.Success", name));
+        player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Success", name));
         return true;
     }
     //Remove
     public boolean remove(Player player) {
         //存在するか
         if (!isExists()) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Remove.Exists"));
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Remove.Exists"));
             return true;
         }
         //プレイヤーが派閥に所属しているか
         KrPlayer krp = new KrPlayer(player);
-        if (krp.getFaction() == null) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Remove.Belong"));
+        if (!krp.isBelong()) {
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Remove.Belong"));
             return true;
         }
         //プレイヤーの派閥と一致するか
         if (krp.getFaction().equals(name)) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Remove.Match"));
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Remove.Match"));
             return true;
         }
         //プレイヤーが派閥の頭首か
         if (getLeader().getName().equals(player.getName())) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Remove.NotLeader"));
+            player.sendMessage(Main.instance.messenger().getMsg("Command.Remove.NotLeader"));
             return true;
         }
         //ここで削除
         delete();
-        player.sendMessage(Main.instance.messenger().getMsg("Faction.Remove.Success", name));
+        krp.setFaction(null);
+        player.sendMessage(Main.instance.messenger().getMsg("Faction.Success", name));
         return true;
     }
 

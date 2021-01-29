@@ -1,6 +1,7 @@
 package com.github.koryu25.krterritory;
 
 import com.github.koryu25.krterritory.kr.KrChunk;
+import com.github.koryu25.krterritory.kr.KrFaction;
 import com.github.koryu25.krterritory.kr.KrPlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -83,6 +84,22 @@ public class CommandManager implements CommandExecutor {
                     return true;
                 }
                 return new KrChunk(player.getLocation().getChunk()).recovery(player);
+            }
+            //派閥作成
+            if (args[0].equalsIgnoreCase("Create")) {
+                if (args.length != 2) {
+                    player.sendMessage(Main.instance.messenger().getMsg("Command.Create.Usage"));
+                    return true;
+                }
+                return new KrFaction(args[1]).create(player);
+            }
+            //派閥削除
+            if (args[0].equalsIgnoreCase("Remove")) {
+                if (args.length != 2) {
+                    player.sendMessage(Main.instance.messenger().getMsg("Command.Remove.Usage"));
+                    return true;
+                }
+                return new KrFaction(args[1]).remove(player);
             }
         }
         return false;
