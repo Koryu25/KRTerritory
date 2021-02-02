@@ -2,6 +2,8 @@ package com.github.koryu25.krterritory.listener;
 
 import com.github.koryu25.krterritory.Main;
 import com.github.koryu25.krterritory.kr.KrChunk;
+import com.github.koryu25.krterritory.kr.KrFaction;
+import com.github.koryu25.krterritory.kr.KrPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -15,9 +17,14 @@ public class EntityDamageByEntityListener implements Listener {
 
     @EventHandler
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
-        if (e.getEntity() instanceof Player) return;
-        if (e.getDamager() instanceof Player) {
-            e.setCancelled(new KrChunk(e.getEntity().getLocation().getChunk()).isProtected((Player) e.getDamager()));
+        if (e.getEntity() instanceof Player) {
+            if (e.getDamager() instanceof Player) {
+                e.setCancelled(new KrPlayer((Player) e.getEntity()).getFaction().equals(new KrPlayer((Player) e.getDamager()).getFaction()));
+            }
+        } else {
+            if (e.getDamager() instanceof Player) {
+                e.setCancelled(new KrChunk(e.getEntity().getLocation().getChunk()).isProtected((Player) e.getDamager()));
+            }
         }
     }
 }

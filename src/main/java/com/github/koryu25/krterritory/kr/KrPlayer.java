@@ -20,7 +20,8 @@ public class KrPlayer {
     //Constructor
     public KrPlayer(Player player) {
         this.player = player;
-        this.uuid = player.getUniqueId().toString();
+        if (player == null) this.uuid = null;
+        else this.uuid = player.getUniqueId().toString();
     }
 
     //領土枠購入

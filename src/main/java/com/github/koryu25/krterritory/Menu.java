@@ -33,9 +33,7 @@ public class Menu {
                     "§7名前§f: " + krf.getName(),
                     "§7頭首§f: " + krf.getLeader().getName(),
                     "§7員数§f: " + krf.getMember().size() + "/" + krf.getMaxMember(),
-                    "§7所有領土数§f: " + krf.getTerritory() + "/" + krf.getMaxTerritory(),
-                    "§7味方派閥数§f: " + krf.getAlly().size() + "/" + Main.instance.myConfig().factionAlly,
-                    "§7敵派閥数§f: " + krf.getEnemy().size() + "/" + Main.instance.myConfig().factionEnemy
+                    "§7所有領土数§f: " + krf.getTerritory() + "/" + krf.getMaxTerritory()
             ));
         }
         //現在チャンクの情報

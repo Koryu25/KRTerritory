@@ -96,8 +96,14 @@ public class KrFaction {
             sender.sendMessage("メンバー枠が足りません。");
             return true;
         }
+        KrPlayer krp = new KrPlayer(target);
+        //DBにプレイヤーが存在するか
+        if (!krp.isExists()) {
+            sender.sendMessage("プレイヤーが存在しません。");
+            return true;
+        }
         //ここで追加
-        new KrPlayer(target).setFaction(name);
+        krp.setFaction(name);
         sender.sendMessage("プレイヤー:" + target.getName() + "を派閥に追加しました。");
         target.sendMessage("派閥:" + name + "に加入しました。離脱するには→/krt leave");
         return true;
@@ -119,8 +125,14 @@ public class KrFaction {
             sender.sendMessage("入力されたプレイヤーは派閥に所属していません。");
             return true;
         }
+        KrPlayer krp = new KrPlayer(target);
+        //DBにプレイヤーが存在するか
+        if (!krp.isExists()) {
+            sender.sendMessage("プレイヤーが存在しません。");
+            return true;
+        }
         //ここで除外
-        new KrPlayer(target).setFaction(null);
+        krp.setFaction(null);
         sender.sendMessage("プレイヤー:" + target.getName() + "を派閥から除外しました。");
         target.sendMessage("派閥:" + name + "から除外されました。");
         return true;
