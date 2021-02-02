@@ -67,7 +67,7 @@ public class MySQLManager {
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, coordinate);
             ps.setString(2, owner);
-            ps.setInt(4, hp);
+            ps.setInt(3, hp);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
