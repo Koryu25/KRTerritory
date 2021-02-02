@@ -23,6 +23,62 @@ public class KrPlayer {
         this.uuid = player.getUniqueId().toString();
     }
 
+    //領土枠購入
+    public boolean buySlot() {
+        //お金が足りてるか
+        int money = getMoney() - Main.instance.myConfig().chunkSlot;
+        if (money <= 0) {
+            player.sendMessage("お金が足りません。");
+            return true;
+        }
+        //最大値でないか
+        if (getMaxTerritory() == Main.instance.myConfig().chunkMaxSlot) {
+            player.sendMessage("既に最大値です。");
+            return true;
+        }
+        //ここで解放
+        setMoney(money);
+        setMaxTerritory(getMaxTerritory() + 1);
+        player.sendMessage("領土所有枠を買いました。");
+        return true;
+    }
+    //領土HP購入
+    public boolean buyHP() {
+        //お金が足りてるか
+        int money = getMoney() - Main.instance.myConfig().chunkLevel;
+        if (money <= 0) {
+            player.sendMessage("お金が足りません。");
+            return true;
+        }
+        //最大値でないか
+        if (getHPLevel() == Main.instance.myConfig().chunkMaxLevel) {
+            player.sendMessage("既に最大値です。");
+            return true;
+        }
+        //ここでレベルアップ
+        setMoney(money);
+        setHPLevel(getHPLevel() + 1);
+        player.sendMessage("領土HPレベルを買いました。");
+        return true;
+    }
+    //派閥離脱
+    public boolean leave() {
+        //派閥に所属しているか
+        if (!isBelong()) {
+            player.sendMessage("あなたは派閥に所属していません。");
+            return true;
+        }
+        //頭首でないか
+        if (isLeader()) {
+            player.sendMessage("派閥の頭首は離脱できません。");
+            return true;
+        }
+        //ここで離脱
+        setFaction(null);
+        player.sendMessage("派閥から離脱しました。");
+        return true;
+    }
+
     //Insert
     public void insert() {
         if (isExists()) return;
@@ -46,42 +102,9 @@ public class KrPlayer {
         if (getFaction() != null) return true;
         else return false;
     }
-    //購入
-    public boolean buySlot() {
-        //お金が足りてるか
-        int money = getMoney() - Main.instance.myConfig().chunkSlot;
-        if (money <= 0) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.NotEnough"));
-            return true;
-        }
-        //最大値でないか
-        if (getMaxTerritory() == Main.instance.myConfig().chunkMaxSlot) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Slot.Max"));
-            return true;
-        }
-        //ここで解放
-        setMoney(money);
-        setMaxTerritory(getMaxTerritory() + 1);
-        player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Slot.Success"));
-        return true;
-    }
-    public boolean buyHP() {
-        //お金が足りてるか
-        int money = getMoney() - Main.instance.myConfig().chunkLevel;
-        if (money <= 0) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.NotEnough"));
-            return true;
-        }
-        //最大値でないか
-        if (getHPLevel() == Main.instance.myConfig().chunkMaxLevel) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.HP.Max"));
-            return true;
-        }
-        //ここでレベルアップ
-        setMoney(money);
-        setHPLevel(getHPLevel() + 1);
-        player.sendMessage(Main.instance.messenger().getMsg("Command.Buy.Level.Success"));
-        return true;
+    public boolean isLeader() {
+        if (getFaction() == null) return false;
+        return new KrFaction(getFaction()).isLeader(player);
     }
 
     //Getter

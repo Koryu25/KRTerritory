@@ -17,10 +17,23 @@ public class MyConfig {
     public String username;
     public String password;
     public String database;
+
+    //派閥作成資金
+    public int factionCreate;
     //派閥の使用禁止名
-    public List<String> bannedname;
+    public List<String> factionBannedName;
+    //派閥メンバー枠値段
+    public int factionSlot;
+    //派閥最大メンバー数
+    public int factionMember;
+    //派閥最大味方派閥数
+    public int factionAlly;
+    //派閥最大敵派閥数
+    public int factionEnemy;
+
     //使用ワールド
     public World world;
+
     //初期チャンクHP
     public int chunkHP;
     //領土のHPlevelの値段
@@ -53,10 +66,23 @@ public class MyConfig {
         username = config.getString("MySQL.username");
         password = config.getString("MySQL.password");
         database = config.getString("MySQL.database");
+
+        //派閥作成資金
+        factionCreate = config.getInt("FactionCreate");
         //派閥の使用禁止名
-        bannedname = config.getStringList("BannedName");
+        factionBannedName = config.getStringList("FactionBannedName");
+        //派閥メンバー枠値段
+        factionSlot = config.getInt("FactionSlot");
+        //派閥最大メンバー数
+        factionMember = config.getInt("FactionMember");
+        //派閥最大味方派閥数
+        factionAlly = config.getInt("FactionAlly");
+        //派閥最大敵派閥数
+        factionEnemy = config.getInt("FactionEnemy");
+
         //使用ワールド名
         world = Bukkit.getWorld(config.getString("WorldName"));
+
         //初期チャンクHP
         chunkHP = config.getInt("ChunkHP");
         //領土のHPLevelの値段

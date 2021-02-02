@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.TimeZone;
 
 public class MySQLManager {
 
@@ -25,7 +27,7 @@ public class MySQLManager {
         this.password = password;
         this.port = port;
         if (!connectionTest()) {
-            Main.instance.getLogger().severe(Main.instance.messenger().getMsg("MySQL.ConnectionFailure"));
+            Main.instance.getLogger().severe("§cデータベースへの接続テストに失敗しました。サーバーを停止します。");
             Bukkit.shutdown();
         }
     }
@@ -50,7 +52,6 @@ public class MySQLManager {
     //レコード登録
     public void insertPlayer(String name, String uuid) {
         try {
-            openConnection();
             String s = "INSERT INTO player (name, uuid) VALUES (?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, name);
@@ -62,7 +63,6 @@ public class MySQLManager {
     }
     public void insertTerritory(String coordinate, String owner, int hp) {
         try {
-            openConnection();
             String s = "INSERT INTO territory (coordinate, owner, hp) VALUES (?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, coordinate);
@@ -75,11 +75,11 @@ public class MySQLManager {
     }
     public void insertFaction(String name, String leader) {
         try {
-            openConnection();
-            String s = "INSERT INTO faction (name, leader) VALUES (?, ?)";
+            String s = "INSERT INTO faction (name, creation_date, leader) VALUES (?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, name);
-            ps.setString(2, leader);
+            ps.setDate(2, now());
+            ps.setString(3, leader);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -88,7 +88,6 @@ public class MySQLManager {
     //レコード削除
     public void delete(String table, String column, String value) {
         try {
-            openConnection();
             String s = "DELETE FROM "+ table +" WHERE "+ column +" = ?";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, value);
@@ -100,7 +99,6 @@ public class MySQLManager {
     //存在確認
     public boolean exists(String table, String where, String value) {
         try {
-            openConnection();
             String s = "SELECT * FROM "+ table +" WHERE "+ where +" = ? ";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, value);
@@ -114,7 +112,6 @@ public class MySQLManager {
     }
     public boolean exists(String table, String where, int value) {
         try {
-            openConnection();
             String s = "SELECT * FROM "+ table +" WHERE "+ where +" = ? ";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setInt(1, value);
@@ -129,7 +126,6 @@ public class MySQLManager {
     //値取得
     public String selectString(String table, String column, String where, String value) {
         try {
-            openConnection();
             String  s = "SELECT * FROM "+ table +" WHERE "+ where +" = ?";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, value);
@@ -145,7 +141,6 @@ public class MySQLManager {
     }
     public List<String> selectStringList(String table, String column, String where, String value) {
         try {
-            openConnection();
             String  s = "SELECT * FROM "+ table +" WHERE "+ where +" = ?";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, value);
@@ -162,7 +157,6 @@ public class MySQLManager {
     }
     public int selectInt(String table, String column, String where, String value) {
         try {
-            openConnection();
             String  s = "SELECT * FROM "+ table +" WHERE "+ where +" = ?";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, value);
@@ -178,7 +172,6 @@ public class MySQLManager {
     }
     public boolean selectBoolean(String table, String column, String where, String value) {
         try {
-            openConnection();
             String  s = "SELECT * FROM "+ table +" WHERE "+ where +" = ?";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, value);
@@ -194,9 +187,23 @@ public class MySQLManager {
             return false;
         }
     }
+    public Date selectDate(String table, String column, String where, String value) {
+        try {
+            String  s = "SELECT * FROM "+ table +" WHERE "+ where +" = ?";
+            PreparedStatement ps = connection.prepareStatement(s);
+            ps.setString(1, value);
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) {
+                return rs.getDate(column);
+            }
+            return null;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     public int selectQuantity(String table, String where, String value) {
         try {
-            openConnection();
             String  s = "SELECT * FROM "+ table +" WHERE "+ where +" = ?";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, value);
@@ -214,7 +221,6 @@ public class MySQLManager {
     //値更新
     public void update(String table, String update_column, String update_value, String where_column, String where_value) {
         try {
-            openConnection();
             String queryString = "UPDATE "+ table +" SET "+ update_column +" = ? WHERE "+ where_column +" = ?";
             PreparedStatement ps = connection.prepareStatement(queryString);
             ps.setString(1, update_value);
@@ -226,7 +232,6 @@ public class MySQLManager {
     }
     public void update(String table, String update_column, int update_value, String where_column, String where_value) {
         try {
-            openConnection();
             String queryString = "UPDATE "+ table +" SET "+ update_column +" = ? WHERE "+ where_column +" = ?";
             PreparedStatement ps = connection.prepareStatement(queryString);
             ps.setInt(1, update_value);
@@ -238,7 +243,6 @@ public class MySQLManager {
     }
     public void update(String table, String update_column, String update_value, String where_column, int where_value) {
         try {
-            openConnection();
             String queryString = "UPDATE "+ table +" SET "+ update_column +" = ? WHERE "+ where_column +" = ?";
             PreparedStatement ps = connection.prepareStatement(queryString);
             ps.setString(1, update_value);
@@ -250,7 +254,6 @@ public class MySQLManager {
     }
     public void update(String table, String update_column, int update_value, String where_column, int where_value) {
         try {
-            openConnection();
             String queryString = "UPDATE "+ table +" SET "+ update_column +" = ? WHERE "+ where_column +" = ?";
             PreparedStatement ps = connection.prepareStatement(queryString);
             ps.setInt(1, update_value);
@@ -259,5 +262,10 @@ public class MySQLManager {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    public static Date now() {
+        Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
+        String date = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH);
+        return Date.valueOf(date);
     }
 }

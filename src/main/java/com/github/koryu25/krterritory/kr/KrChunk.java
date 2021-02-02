@@ -27,6 +27,63 @@ public class KrChunk {
         this.coordinate = chunk.getX() + "," + chunk.getZ();
     }
 
+    //Claim
+    public boolean claim(Player player) {
+        //ワールド確認
+        if (player.getWorld() != Main.instance.myConfig().world) {
+            player.sendMessage("現在ワールドの領土は所有できません。");
+            return true;
+        }
+        //チャンクが所有されてないか
+        if (isExists()) {
+            if (isOwner(player)) {
+                player.sendMessage("現在チャンクは既に所有しています。");
+            } else {
+                player.sendMessage("現在チャンクはプレイヤー:" + getOwner().getName() + "が所有しています。");
+            }
+            return true;
+        }
+        //領土枠が足りてるか
+        KrPlayer krp = new KrPlayer(player);
+        if (krp.getMaxTerritory() <= krp.getTerritory()) {
+            player.sendMessage("最大所有可能領土数が上限です。");
+            return true;
+        }
+        //お金が足りてるか
+        int money = krp.getMoney() - Main.instance.myConfig().chunkClaim;
+        if (money < 0) {
+            player.sendMessage("お金が足りません。");
+            return true;
+        }
+        //ここで領土主張
+        krp.setMoney(money);
+        insert(player.getUniqueId().toString());
+        player.sendMessage("現在チャンクの所有権を主張しました。");
+        return true;
+    }
+    //UnClaim
+    public boolean unclaim(Player player) {
+        //ワールド確認
+        if (player.getWorld() != Main.instance.myConfig().world) {
+            player.sendMessage("現在ワールドで領土の放棄はできません。");
+            return true;
+        }
+        //チャンクが所有されているか
+        if (!isExists()) {
+            player.sendMessage("現在チャンクは所有されていません。");
+            return true;
+        }
+        //チャンクが自分のものか
+        if (!isOwner(player)) {
+            player.sendMessage("現在チャンクはプレイヤー:" + getOwner().getName() + "に所有されています。");
+            return true;
+        }
+        //ここで領土放棄
+        delete();
+        player.sendMessage("現在チャンクを放棄しました。");
+        return true;
+    }
+
     //Insert
     public void insert(String owner) {
         if (isExists()) return;
@@ -38,63 +95,6 @@ public class KrChunk {
         if (!isExists()) return;
         Main.instance.mysql().delete("territory", "coordinate", coordinate);
     }
-    //Claim
-    public boolean claim(Player player) {
-        //ワールド確認
-        if (player.getWorld() != Main.instance.myConfig().world) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.World"));
-            return true;
-        }
-        //チャンクが所有されてないか
-        if (isExists()) {
-            if (isOwner(player)) {
-                player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Own"));
-            } else {
-                player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Other", getOwner()));
-            }
-            return true;
-        }
-        //領土枠が足りてるか
-        KrPlayer krp = new KrPlayer(player);
-        if (krp.getMaxTerritory() <= krp.getTerritory()) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Max"));
-            return true;
-        }
-        //お金が足りてるか
-        int money = krp.getMoney() - Main.instance.myConfig().chunkClaim;
-        if (money < 0) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Money"));
-            return true;
-        }
-        //ここで領土主張
-        krp.setMoney(money);
-        insert(player.getUniqueId().toString());
-        player.sendMessage(Main.instance.messenger().getMsg("Command.Claim.Success"));
-        return true;
-    }
-    //UnClaim
-    public boolean unclaim(Player player) {
-        //ワールド確認
-        if (player.getWorld() != Main.instance.myConfig().world) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.World"));
-            return true;
-        }
-        //チャンクが所有されているか
-        if (!isExists()) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.NoOwner"));
-            return true;
-        }
-        //チャンクが自分のものか
-        if (!isOwner(player)) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Player", getOwner()));
-            return true;
-        }
-        //ここで領土放棄
-        delete();
-        player.sendMessage(Main.instance.messenger().getMsg("Command.UnClaim.Success"));
-        return true;
-    }
-
     //isExists
     public boolean isExists() {
         return Main.instance.mysql().exists("territory", "coordinate", coordinate);
@@ -125,7 +125,7 @@ public class KrChunk {
         //所有者確認
         if (isOwner(player)) return false;
         //報告
-        String msg = Main.instance.messenger().getMsg("Protected");
+        String msg = "現在のチャンクは保護されているため、干渉できません。";
         player.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
         return true;
     }
@@ -139,12 +139,12 @@ public class KrChunk {
         KrPlayer krp = new KrPlayer(getOwner());
         if (krp.isBelong()) {
             if (!new KrFaction(krp.getFaction()).isOnline()) {
-                String msg = Main.instance.messenger().getMsg("War.Offline", getOwner());
+                String msg = "所有者がオフラインなので攻撃できません。";
                 attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
                 return true;
             }
         } else if (!getOwner().isOnline()) {
-            String msg = Main.instance.messenger().getMsg("War.Offline", getOwner());
+            String msg = "所有者がオフラインなので攻撃できません。";
             attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             return true;
         }
@@ -160,18 +160,18 @@ public class KrChunk {
             //HP
             setHP(new KrPlayer(attacker).getMaxHP());
             //攻撃者にメッセージ
-            attacker.sendMessage(Main.instance.messenger().getMsg("War.Territory.Win"));
+            attacker.sendMessage("領土を奪いました。");
             //所有者にメッセージ
-            getOwner().sendMessage(Main.instance.messenger().getMsg("War.Territory.Lose"));
+            getOwner().sendMessage("領土を奪われました。");
             return false;
         } else {
             //ダメージ付与
             setHP(hp);
             //攻撃者にメッセージ
-            String msg = Main.instance.messenger().getMsg("War.Territory.HP") + hp;
+            String msg = "§c領土攻撃中　HP: " + hp;
             attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             //所有者にメッセージ
-            msg = Main.instance.messenger().getMsg("War.Territory.Attacked");
+            msg = "§4領土が攻撃されています！";
             getOwner().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             return true;
         }
@@ -180,30 +180,30 @@ public class KrChunk {
     public boolean recovery(Player player) {
         //ワールド確認
         if (player.getWorld() != Main.instance.myConfig().world) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.World"));
+            player.sendMessage("現在のワールドで領土HPの回復はできません。");
             return true;
         }
         //所有者確認
         if (!isOwner(player)) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.NotOwner"));
+            player.sendMessage("あなたは現在チャンクの所有者ではありません。");
             return true;
         }
         //既に上限か確認
         if (getHP() == getMaxHP()) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.Max"));
+            player.sendMessage("領土HPは既に上限値です。");
             return true;
         }
         //お金が足りるか確認
         KrPlayer krp = new KrPlayer(player);
         int money = krp.getMoney() - Main.instance.myConfig().chunkRecovery;
         if (money < 0) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.NotEnough"));
+            player.sendMessage("お金が足りません。");
             return true;
         }
         //ここで回復
         krp.setMoney(money);
         setHP(getMaxHP());
-        player.sendMessage(Main.instance.messenger().getMsg("Command.Recovery.Success"));
+        player.sendMessage("領土HPを回復しました。");
         return true;
     }
 

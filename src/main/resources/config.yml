@@ -6,12 +6,22 @@ MySQL:
   username: root
   password:
 
+# 派閥作成資金
+FactionCreate: 80000
 # 派閥の使用不可名
-BannedName:
+FactionBannedName:
   - none
   - 未所属
   - 所属無し
   - 所有者なし
+# メンバー枠値段
+FactionSlot: 40000
+# 最大メンバー数
+FactionMember: 50
+# 最大味方派閥数
+FactionAlly: 10
+# 最大敵派閥数
+FactionEnemy: 10
 
 # 使用ワールド名
 WorldName: world

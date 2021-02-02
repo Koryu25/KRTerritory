@@ -4,27 +4,18 @@ import com.github.koryu25.krterritory.Main;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.sql.Date;
+import java.util.*;
 
 public class KrFaction {
 
     //InstanceField
     //名前
     private final String name;
-    //色
-    //private String color;
-    //所持金
-    //private int money;
     //リーダー
     //private Player leader;
     //最大メンバー数(システム限界を25に設定(DB的に))
     //private int maxMember;
-    //メンバー
-    //private List<Player> member;
-    //最大領土数
-    //private int maxTerritory;
     //味方派閥
     //private List<String> ally;
     //敵派閥
@@ -33,6 +24,154 @@ public class KrFaction {
     //Constructor
     public KrFaction(String name) {
         this.name = name;
+    }
+
+    //Create
+    public boolean create(Player player) {
+        //文字制限の確認
+        if (name.length() < 3 || name.length() > 24) {
+            player.sendMessage("派閥の名前は3文字以上、24文字以下です。");
+            return true;
+        }
+        //同じ名前が存在してないか
+        if (isExists()) {
+            player.sendMessage("入力した名前の派閥は既に存在します。");
+            return true;
+        }
+        //プレイヤーがすでに所属してないか
+        KrPlayer krp = new KrPlayer(player);
+        if (krp.isBelong()) {
+            player.sendMessage("あなたは既に派閥に所属しています。");
+            return true;
+        }
+        //ここで作成
+        insert(player);
+        krp.setFaction(name);
+        player.sendMessage("派閥:" + name + "を作成しました。");
+        return true;
+    }
+    //Remove
+    public boolean remove(Player player) {
+        //存在するか
+        if (!isExists()) {
+            player.sendMessage("入力した派閥は存在しません。");
+            return true;
+        }
+        //プレイヤーが派閥に所属しているか
+        KrPlayer krp = new KrPlayer(player);
+        if (!krp.isBelong()) {
+            player.sendMessage("あなたは派閥に所属していません。");
+            return true;
+        }
+        //プレイヤーの派閥と一致するか
+        if (!krp.getFaction().equals(name)) {
+            player.sendMessage("あなたは入力した派閥に所属していません。");
+            return true;
+        }
+        //プレイヤーが派閥の頭首か
+        if (!isLeader(player)) {
+            player.sendMessage("あなたは派閥の頭首ではありません。");
+            return true;
+        }
+        //ここで削除
+        delete();
+        krp.setFaction(null);
+        player.sendMessage("派閥:" + name + "を削除しました。");
+        return true;
+    }
+    //Add
+    public boolean add(Player sender, Player target) {
+        //派閥が存在するか
+        if (!isExists()) {
+            sender.sendMessage("あなたは派閥に所属していません。");
+            return true;
+        }
+        //派閥の頭首か
+        if (!isLeader(sender)) {
+            sender.sendMessage("あなたは派閥の頭首ではありません。");
+            return true;
+        }
+        //枠が足りてるか
+        if (getMaxMember() == getMember().size()) {
+            sender.sendMessage("メンバー枠が足りません。");
+            return true;
+        }
+        //ここで追加
+        new KrPlayer(target).setFaction(name);
+        sender.sendMessage("プレイヤー:" + target.getName() + "を派閥に追加しました。");
+        target.sendMessage("派閥:" + name + "に加入しました。離脱するには→/krt leave");
+        return true;
+    }
+    //Kick
+    public boolean kick(Player sender, Player target) {
+        //派閥が存在するか
+        if (!isExists()) {
+            sender.sendMessage("あなたは派閥に所属していません。");
+            return true;
+        }
+        //派閥の頭首か
+        if (!isLeader(sender)) {
+            sender.sendMessage("あなたは派閥の頭首ではありません。");
+            return true;
+        }
+        //対象が派閥に所属しているか
+        if (!name.equals(new KrPlayer(target).getFaction())) {
+            sender.sendMessage("入力されたプレイヤーは派閥に所属していません。");
+            return true;
+        }
+        //ここで除外
+        new KrPlayer(target).setFaction(null);
+        sender.sendMessage("プレイヤー:" + target.getName() + "を派閥から除外しました。");
+        target.sendMessage("派閥:" + name + "から除外されました。");
+        return true;
+    }
+    //BuySlot
+    public boolean buySlot(Player player) {
+        //派閥が存在するか
+        if (!isExists()) {
+            player.sendMessage("あなたは派閥に所属していません。");
+            return true;
+        }
+        //お金が足りてるか
+        KrPlayer krp = new KrPlayer(player);
+        int money = krp.getMoney() - Main.instance.myConfig().factionSlot;
+        if (money <= 0) {
+            player.sendMessage("お金が足りません。");
+            return true;
+        }
+        //最大値でないか
+        if (getMaxMember() == Main.instance.myConfig().factionMember) {
+            player.sendMessage("既に最大値です。");
+            return true;
+        }
+        //ここで解放
+        krp.setMoney(money);
+        setMaxMember(getMaxMember() + 1);
+        player.sendMessage("メンバー枠を購入しました。");
+        return true;
+    }
+    //Change
+    public boolean change(Player sender, Player target) {
+        //派閥が存在するか
+        if (!isExists()) {
+            sender.sendMessage("あなたは派閥に所属していません。");
+            return true;
+        }
+        //派閥の頭首か
+        if (!isLeader(sender)) {
+            sender.sendMessage("あなたは派閥の頭首ではありません。");
+            return true;
+        }
+        //対象が派閥に所属しているか
+        if (!name.equals(new KrPlayer(target).getFaction())) {
+            sender.sendMessage("入力されたプレイヤーは派閥に所属していません。");
+            return true;
+        }
+        //ここで交代
+        setLeader(target);
+        sender.sendMessage("プレイヤー:" + target.getName() + "を派閥の頭首にしました。");
+        target.sendMessage("派閥:" + name + "の頭首に任命されました。");
+        return true;
     }
 
     //Insert
@@ -45,60 +184,6 @@ public class KrFaction {
         if (!isExists()) return;
         Main.instance.mysql().delete("faction", "name", name);
     }
-    //Create
-    public boolean create(Player player) {
-        //文字制限の確認
-        if (name.length() < 3 || name.length() > 24) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Create.Length"));
-            return true;
-        }
-        //同じ名前が存在してないか
-        if (isExists()) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Create.Exists"));
-            return true;
-        }
-        //プレイヤーがすでに所属してないか
-        KrPlayer krp = new KrPlayer(player);
-        if (krp.isBelong()) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Create.Belong"));
-            return true;
-        }
-        //ここで作成
-        insert(player);
-        krp.setFaction(name);
-        player.sendMessage(Main.instance.messenger().getMsg("Command.Faction.Success", name));
-        return true;
-    }
-    //Remove
-    public boolean remove(Player player) {
-        //存在するか
-        if (!isExists()) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Remove.Exists"));
-            return true;
-        }
-        //プレイヤーが派閥に所属しているか
-        KrPlayer krp = new KrPlayer(player);
-        if (!krp.isBelong()) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Remove.Belong"));
-            return true;
-        }
-        //プレイヤーの派閥と一致するか
-        if (krp.getFaction().equals(name)) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Remove.Match"));
-            return true;
-        }
-        //プレイヤーが派閥の頭首か
-        if (getLeader().getName().equals(player.getName())) {
-            player.sendMessage(Main.instance.messenger().getMsg("Command.Remove.NotLeader"));
-            return true;
-        }
-        //ここで削除
-        delete();
-        krp.setFaction(null);
-        player.sendMessage(Main.instance.messenger().getMsg("Faction.Success", name));
-        return true;
-    }
-
     //isExists
     public boolean isExists() {
         return Main.instance.mysql().exists("faction", "name", name);
@@ -110,22 +195,24 @@ public class KrFaction {
         }
         return false;
     }
+    public boolean isLeader(Player player) {
+        if (getLeader().getName().equals(player.getName())) return true;
+        else return false;
+    }
 
     //Getter
     public String getName() {
         return name;
     }
-    public String getColor() {
-        return Main.instance.mysql().selectString("faction", "color", "name", name);
-    }
-    public String getColorName() {
-        return getColor() + getName();
-    }
-    public int getMoney() {
-        return Main.instance.mysql().selectInt("faction", "money", "name", name);
-    }
     public int getTerritory() {
-        return Main.instance.mysql().selectQuantity("territory", "owner", name);
+        int territory = 0;
+        for (Player one : getMember()) territory += new KrPlayer(one).getTerritory();
+        return territory;
+    }
+    public int getMaxTerritory() {
+        int max = 0;
+        for (Player one : getMember()) max += new KrPlayer(one).getMaxTerritory();
+        return max;
     }
     public Player getLeader() {
         return Bukkit.getPlayer(UUID.fromString(Main.instance.mysql().selectString("faction", "leader", "name", name)));
@@ -136,15 +223,6 @@ public class KrFaction {
     public List<Player> getMember() {
         return stringToPlayer(Main.instance.mysql().selectStringList("player", "uuid", "faction", name));
     }
-    public int getMaxTerritory() {
-        return Main.instance.mysql().selectInt("faction", "max_territory", "name", name);
-    }
-    public int getHPLevel() {
-        return Main.instance.mysql().selectInt("faction", "hp_level", "name", name);
-    }
-    public int getMaxHP() {
-        return getHPLevel() * Main.instance.myConfig().chunkHP;
-    }
     public List<String> getAlly() {
         return stringToList(Main.instance.mysql().selectString("faction", "ally", "name", name));
     }
@@ -152,23 +230,11 @@ public class KrFaction {
         return stringToList(Main.instance.mysql().selectString("faction", "enemy", "name", name));
     }
     //Setter
-    public void setColor(String color) {
-        Main.instance.mysql().update("faction", "color", color, "name", name);
-    }
-    public void setMoney(int money) {
-        Main.instance.mysql().update("faction", "money", money, "name", name);
-    }
     public void setLeader(Player leader) {
         Main.instance.mysql().update("faction", "leader", leader.getUniqueId().toString(), "name", name);
     }
     public void setMaxMember(int maxMember) {
         Main.instance.mysql().update("faction", "max_member", maxMember, "name", name);
-    }
-    public void setMaxTerritory(int maxTerritory) {
-        Main.instance.mysql().update("faction", "max_territory", maxTerritory, "name", name);
-    }
-    public void setHPLevel(int level) {
-        Main.instance.mysql().update("faction", "hp_level", level, "name", name);
     }
     public void setAlly(List<String> ally) {
         Main.instance.mysql().update("faction", "ally", listToString(ally), "name", name);
