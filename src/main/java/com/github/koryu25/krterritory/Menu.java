@@ -44,7 +44,7 @@ public class Menu {
             else material = Material.RED_STAINED_GLASS_PANE;
             inv.setItem(cIndex, item(Material.GRASS_BLOCK, cName,
                     "§7座標§f: " + krc.getCoordinate(),
-                    "§7所有者§f: " + krc.getOwner(),
+                    "§7所有者§f: " + krc.getOwnerName(),
                     "§7HP: §f" + krc.getHP() + "/" + krc.getMaxHP(),
                     "§a領土メニューへ"
             ));
@@ -77,7 +77,7 @@ public class Menu {
         if (krc.isExists()) {
             inv.setItem(1, item(Material.GRASS_BLOCK, "チャンク詳細:",
                     "§7座標§f: " + krc.getCoordinate(),
-                    "§7所有者§f: " + krc.getOwner(),
+                    "§7所有者§f: " + krc.getOwnerName(),
                     "§7HP: §f" + krc.getHP() + "/" + krc.getMaxHP()
             ));
         } else {

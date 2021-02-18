@@ -27,10 +27,10 @@ public class PlayerMoveListener implements Listener {
                 if (krcFrom.isExists()) {
                     if (krcFrom.getOwner().equals(krcTo.getOwner())) return;
                 }
-                msg = krcTo.getOwner() + "の所有する領域に入りました。";
+                msg = krcTo.getOwnerName() + "の所有する領域に入りました。";
             } else {
                 if (!krcFrom.isExists()) return;
-                msg = krcFrom.getOwner() + "の所有する領域から出ました。";
+                msg = krcFrom.getOwnerName() + "の所有する領域から出ました。";
             }
             e.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
         }

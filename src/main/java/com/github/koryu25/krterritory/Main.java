@@ -1,7 +1,9 @@
 package com.github.koryu25.krterritory;
 
 import com.github.koryu25.krterritory.file.MyConfig;
+import com.github.koryu25.krterritory.kr.KrPlayer;
 import com.github.koryu25.krterritory.listener.*;
+import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
 
 public final class Main extends JavaPlugin {
@@ -24,6 +26,7 @@ public final class Main extends JavaPlugin {
         //Listener
         //Player
         new PlayerJoinListener();
+        new PlayerQuitListener();
         new PlayerMoveListener();
         //Protect
         new PlayerInteractListener();
@@ -35,7 +38,8 @@ public final class Main extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        // Plugin shutdown logic
+        //LastDate
+        Bukkit.getOnlinePlayers().forEach(player -> new KrPlayer(player).setLastDate(MySQLManager.now()));
     }
 
     public MyConfig myConfig() {

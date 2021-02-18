@@ -19,7 +19,9 @@ public class EntityDamageByEntityListener implements Listener {
     public void onEntityDamageByEntity(EntityDamageByEntityEvent e) {
         if (e.getEntity() instanceof Player) {
             if (e.getDamager() instanceof Player) {
-                e.setCancelled(new KrPlayer((Player) e.getEntity()).getFaction().equals(new KrPlayer((Player) e.getDamager()).getFaction()));
+                String faction1 = new KrPlayer((Player) e.getEntity()).getFaction();
+                if (faction1 == null) e.setCancelled(false);
+                e.setCancelled(faction1.equals(new KrPlayer((Player) e.getDamager()).getFaction()));
             }
         } else {
             if (e.getDamager() instanceof Player) {

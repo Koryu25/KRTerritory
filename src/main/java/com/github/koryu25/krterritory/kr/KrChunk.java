@@ -30,7 +30,7 @@ public class KrChunk {
     //Claim
     public boolean claim(Player player) {
         //ワールド確認
-        if (player.getWorld() != Main.instance.myConfig().world) {
+        if (!player.getWorld().getName().equals(Main.instance.myConfig().world)) {
             player.sendMessage("現在ワールドの領土は所有できません。");
             return true;
         }
@@ -39,7 +39,7 @@ public class KrChunk {
             if (isOwner(player)) {
                 player.sendMessage("現在チャンクは既に所有しています。");
             } else {
-                player.sendMessage("現在チャンクはプレイヤー:" + getOwner().getName() + "が所有しています。");
+                player.sendMessage("現在チャンクはプレイヤー:" + getOwnerName() + "が所有しています。");
             }
             return true;
         }
@@ -64,7 +64,7 @@ public class KrChunk {
     //UnClaim
     public boolean unclaim(Player player) {
         //ワールド確認
-        if (player.getWorld() != Main.instance.myConfig().world) {
+        if (!player.getWorld().getName().equals(Main.instance.myConfig().world)) {
             player.sendMessage("現在ワールドで領土の放棄はできません。");
             return true;
         }
@@ -75,7 +75,7 @@ public class KrChunk {
         }
         //チャンクが自分のものか
         if (!isOwner(player)) {
-            player.sendMessage("現在チャンクはプレイヤー:" + getOwner().getName() + "に所有されています。");
+            player.sendMessage("現在チャンクはプレイヤー:" + getOwnerName() + "に所有されています。");
             return true;
         }
         //ここで領土放棄
@@ -104,9 +104,9 @@ public class KrChunk {
         //存在するか
         if (!isExists()) return false;
         //プレイヤーが同じか
-        if (getOwner().equals(player.getUniqueId().toString())) return true;
+        if (getOwnerUUID().equals(player.getUniqueId().toString())) return true;
         //派閥が同じか
-        KrPlayer owner = new KrPlayer(getOwner());
+        KrPlayer owner = new KrPlayer(getOwnerUUID(), getOwnerName());
         if (owner.isBelong()) {
             if (owner.getFaction().equals(new KrPlayer(player).getFaction())) return true;
         }
@@ -121,7 +121,7 @@ public class KrChunk {
     public boolean isProtected(Player player) {
         if (!isExists()) return false;
         //ワールド確認
-        if (player.getWorld() != Main.instance.myConfig().world) return false;
+        if (!player.getWorld().getName().equals(Main.instance.myConfig().world)) return false;
         //所有者確認
         if (isOwner(player)) return false;
         //報告
@@ -131,55 +131,52 @@ public class KrChunk {
     }
     //onAttacked
     public boolean onAttacked(Player attacker, int damage) {
-        if (attacker.getWorld() != Main.instance.myConfig().world) return false;
+        //ワールド確認
+        if (!attacker.getWorld().getName().equals(Main.instance.myConfig().world)) return false;
+        //DBに存在するか
         if (!isExists()) return false;
         //自分の領土か
         if (isOwner(attacker)) return false;
+        //非ログイン日数確認
+        if (new KrPlayer(getOwnerUUID(), getOwnerName()).getNonLoginDays() >= Main.instance.myConfig().protectionDay) return onDamage(attacker, damage, false);
         //所有者がオンラインか
-        KrPlayer krp = new KrPlayer(getOwner());
-        if (krp.isBelong()) {
-            if (!new KrFaction(krp.getFaction()).isOnline()) {
-                String msg = "所有者がオフラインなので攻撃できません。";
-                attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
-                return true;
-            }
-        } else if (!getOwner().isOnline()) {
+        if (!getOwnerIsOnline()) {
             String msg = "所有者がオフラインなので攻撃できません。";
             attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             return true;
         }
         //ここで攻撃
-        return onDamage(attacker, damage);
+        return onDamage(attacker, damage, true);
     }
     //ダメージ
-    public boolean onDamage(Player attacker, int damage) {
+    public boolean onDamage(Player attacker, int damage, boolean login) {
         int hp = getHP() - damage;
         if (hp <= 0) {
             //オーナー変更
-            setOwner(attacker.getUniqueId().toString());
+            setOwner(attacker);
             //HP
             setHP(new KrPlayer(attacker).getMaxHP());
             //攻撃者にメッセージ
             attacker.sendMessage("領土を奪いました。");
             //所有者にメッセージ
-            getOwner().sendMessage("領土を奪われました。");
+            if (login) getOwner().sendMessage("領土を奪われました。");
             return false;
         } else {
             //ダメージ付与
             setHP(hp);
             //攻撃者にメッセージ
-            String msg = "§c領土攻撃中　HP: " + hp;
+            String msg = "§c領土攻撃中 HP: " + hp;
             attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             //所有者にメッセージ
-            msg = "§4領土が攻撃されています！";
-            getOwner().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
+            msg = "§4領土が攻撃されています!! 座標: " + coordinate;
+            if (login) getOwner().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             return true;
         }
     }
     //回復
     public boolean recovery(Player player) {
         //ワールド確認
-        if (player.getWorld() != Main.instance.myConfig().world) {
+        if (!player.getWorld().getName().equals(Main.instance.myConfig().world)) {
             player.sendMessage("現在のワールドで領土HPの回復はできません。");
             return true;
         }
@@ -214,19 +211,29 @@ public class KrChunk {
     public Chunk getChunk() {
         return chunk;
     }
+    public String getOwnerUUID() {
+        return Main.instance.mysql().selectString("territory", "owner", "coordinate", coordinate);
+    }
+    public String getOwnerName() {
+        return Main.instance.mysql().selectString("player", "name", "uuid", getOwnerUUID());
+    }
     public Player getOwner() {
-        return Bukkit.getPlayer(UUID.fromString(Main.instance.mysql().selectString("territory", "owner", "coordinate", coordinate)));
+        return Bukkit.getPlayer(UUID.fromString(getOwnerUUID()));
+    }
+    public boolean getOwnerIsOnline() {
+        if (getOwner() != null) return true;
+        else return false;
     }
     public int getHP() {
         return Main.instance.mysql().selectInt("territory", "hp", "coordinate", coordinate);
     }
     public int getMaxHP() {
         if (!isExists()) return Main.instance.myConfig().chunkHP;
-        return new KrPlayer(getOwner()).getMaxHP();
+        return new KrPlayer(getOwnerUUID(), getOwnerName()).getMaxHP();
     }
     //Setter
-    public void setOwner(String owner) {
-        Main.instance.mysql().update("territory", "owner", owner, "coordinate", coordinate);
+    public void setOwner(Player owner) {
+        Main.instance.mysql().update("territory", "owner", owner.getUniqueId().toString(), "coordinate", coordinate);
     }
     public void setHP(int hitPoint) {
         Main.instance.mysql().update("territory", "hp", hitPoint, "coordinate", coordinate);

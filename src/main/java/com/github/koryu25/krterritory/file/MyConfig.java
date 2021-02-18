@@ -18,6 +18,9 @@ public class MyConfig {
     public String password;
     public String database;
 
+    //保護解除までの非ログイン日数
+    public int protectionDay;
+
     //派閥作成資金
     public int factionCreate;
     //派閥の使用禁止名
@@ -31,12 +34,12 @@ public class MyConfig {
     //派閥最大敵派閥数
     public int factionEnemy;
 
-    //使用ワールド
-    public World world;
+    //使用ワールド名
+    public String world;
 
     //初期チャンクHP
     public int chunkHP;
-    //領土のHPlevelの値段
+    //領土のHPLevelの値段
     public int chunkLevel;
     //上の最大値
     public int chunkMaxLevel;
@@ -67,6 +70,9 @@ public class MyConfig {
         password = config.getString("MySQL.password");
         database = config.getString("MySQL.database");
 
+        //保護解除までの非ログイン日数
+        protectionDay = config.getInt("ProtectionDay");
+
         //派閥作成資金
         factionCreate = config.getInt("FactionCreate");
         //派閥の使用禁止名
@@ -81,7 +87,7 @@ public class MyConfig {
         factionEnemy = config.getInt("FactionEnemy");
 
         //使用ワールド名
-        world = Bukkit.getWorld(config.getString("WorldName"));
+        world = config.getString("WorldName");
 
         //初期チャンクHP
         chunkHP = config.getInt("ChunkHP");

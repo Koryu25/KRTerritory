@@ -40,7 +40,6 @@ public class CommandManager implements CommandExecutor {
                 }
                 //ここで表示
                 Menu.main(player);
-                player.sendMessage("メインメニューを開きました。");
                 return true;
             }
             //購入

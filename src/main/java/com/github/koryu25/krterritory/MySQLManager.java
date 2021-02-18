@@ -52,10 +52,11 @@ public class MySQLManager {
     //レコード登録
     public void insertPlayer(String name, String uuid) {
         try {
-            String s = "INSERT INTO player (name, uuid) VALUES (?, ?)";
+            String s = "INSERT INTO player (name, uuid, last_date) VALUES (?, ?, ?)";
             PreparedStatement ps = connection.prepareStatement(s);
             ps.setString(1, name);
             ps.setString(2, uuid);
+            ps.setDate(3, now());
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
@@ -241,23 +242,12 @@ public class MySQLManager {
             e.printStackTrace();
         }
     }
-    public void update(String table, String update_column, String update_value, String where_column, int where_value) {
+    public void update(String table, String update_column, Date update_value, String where_column, String where_value) {
         try {
             String queryString = "UPDATE "+ table +" SET "+ update_column +" = ? WHERE "+ where_column +" = ?";
             PreparedStatement ps = connection.prepareStatement(queryString);
-            ps.setString(1, update_value);
-            ps.setInt(2, where_value);
-            ps.executeUpdate();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    public void update(String table, String update_column, int update_value, String where_column, int where_value) {
-        try {
-            String queryString = "UPDATE "+ table +" SET "+ update_column +" = ? WHERE "+ where_column +" = ?";
-            PreparedStatement ps = connection.prepareStatement(queryString);
-            ps.setInt(1, update_value);
-            ps.setInt(2, where_value);
+            ps.setDate(1, update_value);
+            ps.setString(2, where_value);
             ps.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();

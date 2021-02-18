@@ -1,7 +1,10 @@
 package com.github.koryu25.krterritory.kr;
 
 import com.github.koryu25.krterritory.Main;
+import com.github.koryu25.krterritory.MySQLManager;
 import org.bukkit.entity.Player;
+
+import java.sql.Date;
 
 public class KrPlayer {
 
@@ -10,6 +13,8 @@ public class KrPlayer {
     private final Player player;
     //uuid
     private final String uuid;
+    //name
+    private final String name;
     //所持金
     //private int money;
     //最大所有可能チャンク数
@@ -18,10 +23,20 @@ public class KrPlayer {
     //private String faction;
 
     //Constructor
+    public KrPlayer(String uuid, String name) {
+        this.player = null;
+        this.uuid = uuid;
+        this.name = name;
+    }
     public KrPlayer(Player player) {
         this.player = player;
-        if (player == null) this.uuid = null;
-        else this.uuid = player.getUniqueId().toString();
+        if (player == null) {
+            this.uuid = null;
+            this.name = null;
+        } else {
+            this.uuid = player.getUniqueId().toString();
+            this.name = player.getName();
+        }
     }
 
     //領土枠購入
@@ -99,13 +114,19 @@ public class KrPlayer {
     public void changedName() {
         if (!player.getName().equals(getName())) setName(player.getName());
     }
+    //派閥に所属しているか
     public boolean isBelong() {
         if (getFaction() != null) return true;
         else return false;
     }
+    //派閥に所属しているかつその頭首か
     public boolean isLeader() {
         if (getFaction() == null) return false;
         return new KrFaction(getFaction()).isLeader(player);
+    }
+    //非ログイン日数
+    public int getNonLoginDays() {
+        return getLastDate().compareTo(MySQLManager.now());
     }
 
     //Getter
@@ -130,6 +151,9 @@ public class KrPlayer {
     public int getMaxHP() {
         return getHPLevel() * Main.instance.myConfig().chunkHP;
     }
+    public Date getLastDate() {
+        return Main.instance.mysql().selectDate("player", "last_date", "uuid", uuid);
+    }
     //Setter
     public void setName(String name) {
         Main.instance.mysql().update("player", "name", name, "uuid", uuid);
@@ -145,5 +169,8 @@ public class KrPlayer {
     }
     public void setHPLevel(int level) {
         Main.instance.mysql().update("player", "hp_level", level, "uuid", uuid);
+    }
+    public void setLastDate(Date date) {
+        Main.instance.mysql().update("player", "last_date", date, "uuid", uuid);
     }
 }

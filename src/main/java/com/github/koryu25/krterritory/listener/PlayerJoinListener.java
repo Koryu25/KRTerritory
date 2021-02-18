@@ -15,7 +15,14 @@ public class PlayerJoinListener implements Listener {
     @EventHandler
     public void onPlayerJoin(PlayerJoinEvent e) {
         KrPlayer krp = new KrPlayer(e.getPlayer());
-        if (krp.isExists()) krp.changedName();
-        else krp.insert();
+        if (krp.isExists()) {
+            krp.changedName();
+            int days = krp.getNonLoginDays();
+            if (days == 0) e.setJoinMessage(e.getPlayer().getName() + "さんがログインしました!");
+            else e.setJoinMessage("§e" + e.getPlayer().getName() + "さんがログインしました! " + days + "日ぶりです。");
+        } else {
+            krp.insert();
+            e.setJoinMessage("§d" + e.getPlayer().getName() + "さんが初めてログインしました! はじめまして!");
+        }
     }
 }
