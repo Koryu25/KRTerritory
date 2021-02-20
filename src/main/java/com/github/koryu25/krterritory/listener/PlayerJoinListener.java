@@ -1,7 +1,9 @@
 package com.github.koryu25.krterritory.listener;
 
 import com.github.koryu25.krterritory.Main;
+import com.github.koryu25.krterritory.Menu;
 import com.github.koryu25.krterritory.kr.KrPlayer;
+import org.bukkit.Material;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -22,6 +24,7 @@ public class PlayerJoinListener implements Listener {
             else e.setJoinMessage("§e" + e.getPlayer().getName() + "さんがログインしました! " + days + "日ぶりです。");
         } else {
             krp.insert();
+            e.getPlayer().getInventory().addItem(Menu.item(Material.STICK, ""));
             e.setJoinMessage("§d" + e.getPlayer().getName() + "さんが初めてログインしました! はじめまして!");
         }
     }

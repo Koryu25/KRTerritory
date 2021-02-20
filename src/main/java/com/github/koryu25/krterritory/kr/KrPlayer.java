@@ -126,7 +126,7 @@ public class KrPlayer {
     }
     //非ログイン日数
     public int getNonLoginDays() {
-        return getLastDate().compareTo(MySQLManager.now());
+        return MySQLManager.now().compareTo(getLastDate());
     }
 
     //Getter

@@ -255,7 +255,7 @@ public class MySQLManager {
     }
     public static Date now() {
         Calendar calendar = Calendar.getInstance(TimeZone.getDefault());
-        String date = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + "-" + calendar.get(Calendar.DAY_OF_MONTH);
+        String date = calendar.get(Calendar.YEAR) + "-" + calendar.get(Calendar.MONTH) + 1 + "-" + calendar.get(Calendar.DAY_OF_MONTH);
         return Date.valueOf(date);
     }
 }

@@ -1,12 +1,17 @@
 package com.github.koryu25.krterritory.kr;
 
 import com.github.koryu25.krterritory.Main;
+import com.github.koryu25.krterritory.listener.BlockBreakListener;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class KrChunk {
@@ -130,11 +135,13 @@ public class KrChunk {
         return true;
     }
     //onAttacked
-    public boolean onAttacked(Player attacker, int damage) {
+    public boolean onAttacked(Player attacker, Block block, int damage) {
         //ワールド確認
         if (!attacker.getWorld().getName().equals(Main.instance.myConfig().world)) return false;
         //DBに存在するか
         if (!isExists()) return false;
+        //ブロック確認
+        if (BlockBreakListener.getBannedMaterial().contains(block.getType())) return true;
         //自分の領土か
         if (isOwner(attacker)) return false;
         //非ログイン日数確認
@@ -151,6 +158,7 @@ public class KrChunk {
     //ダメージ
     public boolean onDamage(Player attacker, int damage, boolean login) {
         int hp = getHP() - damage;
+        Player owner = getOwner();
         if (hp <= 0) {
             //オーナー変更
             setOwner(attacker);
@@ -159,7 +167,7 @@ public class KrChunk {
             //攻撃者にメッセージ
             attacker.sendMessage("領土を奪いました。");
             //所有者にメッセージ
-            if (login) getOwner().sendMessage("領土を奪われました。");
+            if (login) owner.sendMessage("領土を奪われました。");
             return false;
         } else {
             //ダメージ付与
@@ -169,7 +177,7 @@ public class KrChunk {
             attacker.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             //所有者にメッセージ
             msg = "§4領土が攻撃されています!! 座標: " + coordinate;
-            if (login) getOwner().spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
+            if (login) owner.spigot().sendMessage(ChatMessageType.ACTION_BAR, TextComponent.fromLegacyText(msg));
             return true;
         }
     }

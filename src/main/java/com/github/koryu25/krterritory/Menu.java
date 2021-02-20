@@ -143,7 +143,7 @@ public class Menu {
         return inv;
     }
     //アイテム
-    private static ItemStack item(Material material, String name, String... lore) {
+    public static ItemStack item(Material material, String name, String... lore) {
         ItemStack item = new ItemStack(material);
         ItemMeta meta = item.getItemMeta();
         meta.setDisplayName(name);
