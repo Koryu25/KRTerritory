@@ -17,6 +17,7 @@ public class PlayerInteractListener implements Listener {
     public void onPlayerInteract(PlayerInteractEvent e) {
         if (e.getClickedBlock() == null) return;
         if (e.getAction() == Action.LEFT_CLICK_BLOCK) return;
+        if (e.getAction() == Action.RIGHT_CLICK_AIR) return;
         e.setCancelled(new KrChunk(e.getClickedBlock().getChunk()).isProtected(e.getPlayer()));
     }
 }

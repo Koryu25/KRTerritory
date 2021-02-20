@@ -16,9 +16,7 @@ public class BlockBreakListener implements Listener {
 
     public BlockBreakListener() {
         Main.instance.getServer().getPluginManager().registerEvents(this, Main.instance);
-        bannedMaterials.add(Material.WHEAT_SEEDS);
         bannedMaterials.add(Material.WHEAT);
-        bannedMaterials.add(Material.BEETROOT_SEEDS);
         bannedMaterials.add(Material.BEETROOT);
         bannedMaterials.add(Material.PUMPKIN_SEEDS);
         bannedMaterials.add(Material.MELON_SEEDS);
