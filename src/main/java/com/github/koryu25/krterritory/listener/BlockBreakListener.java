@@ -17,9 +17,9 @@ public class BlockBreakListener implements Listener {
     public BlockBreakListener() {
         Main.instance.getServer().getPluginManager().registerEvents(this, Main.instance);
         bannedMaterials.add(Material.WHEAT);
-        bannedMaterials.add(Material.BEETROOT);
-        bannedMaterials.add(Material.PUMPKIN_SEEDS);
-        bannedMaterials.add(Material.MELON_SEEDS);
+        bannedMaterials.add(Material.BEETROOTS);
+        bannedMaterials.add(Material.PUMPKIN_STEM);
+        bannedMaterials.add(Material.MELON_STEM);
         bannedMaterials.add(Material.CARROT);
         bannedMaterials.add(Material.POTATO);
         bannedMaterials.add(Material.OAK_SAPLING);
@@ -95,8 +95,6 @@ public class BlockBreakListener implements Listener {
 
     @EventHandler
     public void onBlockBreak(BlockBreakEvent e) {
-        //ブロックのMaterial取得用
-        if (e.getPlayer().getName().equals("Koryu25")) e.getPlayer().sendMessage("破壊したブロックのMaterial→" + e.getBlock().getType().name());
         e.setCancelled(new KrChunk(e.getBlock().getChunk()).onAttacked(e.getPlayer(), e.getBlock(), 1));
     }
 

@@ -25,7 +25,7 @@ public class PlayerMoveListener implements Listener {
             String msg;
             if (krcTo.isExists()) {
                 if (krcFrom.isExists()) {
-                    if (krcFrom.getOwner().equals(krcTo.getOwner())) return;
+                    if (krcFrom.getOwnerUUID().equals(krcTo.getOwnerUUID())) return;
                 }
                 msg = krcTo.getOwnerName() + "の所有する領域に入りました。";
             } else {

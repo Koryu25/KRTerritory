@@ -27,7 +27,7 @@ FactionAlly: 10
 FactionEnemy: 10
 
 # 使用ワールド名
-WorldName: world
+WorldName: main
 
 # 領土のレベル毎HP
 ChunkHP: 20
